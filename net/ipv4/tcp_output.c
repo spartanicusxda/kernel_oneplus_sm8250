@@ -2788,6 +2788,8 @@ static bool tcp_collapse_retrans(struct sock *sk, struct sk_buff *skb)
 	}
 	tcp_highest_sack_replace(sk, next_skb, skb);
 
+	tcp_unlink_write_queue(next_skb, sk);
+
 	/* Update sequence range on original skb. */
 	TCP_SKB_CB(skb)->end_seq = TCP_SKB_CB(next_skb)->end_seq;
 
