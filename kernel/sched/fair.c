@@ -5508,6 +5508,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	bool prefer_idle = sched_feat(EAS_PREFER_IDLE) ?
 				(schedtune_prefer_idle(p) > 0) : 0;
 	int idle_h_nr_running = idle_policy(p->policy);
+	bool prefer_idle = sched_feat(EAS_PREFER_IDLE) ?
+				(schedtune_prefer_idle(p) > 0) : 0;
 
 	/*
 	 * The code below (indirectly) updates schedutil which looks at
