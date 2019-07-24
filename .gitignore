@@ -145,3 +145,6 @@ kernel/configs/android-*.cfg
 
 # Compiled files directory
 out/**
+
+# Clang's compilation database file
+/compile_commands.json
