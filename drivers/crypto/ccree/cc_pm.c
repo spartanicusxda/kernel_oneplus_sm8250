@@ -71,6 +71,3 @@ int cc_pm_put_suspend(struct device *dev)
 	pm_runtime_mark_last_busy(dev);
 	pm_runtime_put_autosuspend(dev);
 }
-
-	return rc;
-}

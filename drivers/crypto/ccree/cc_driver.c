@@ -86,6 +86,9 @@ static irqreturn_t cc_isr(int irq, void *dev_id)
 	u32 imr;
 
 	/* STAT_OP_TYPE_GENERIC STAT_PHASE_0: Interrupt */
+	/* if driver suspended return, probably shared interrupt */
+	if (pm_runtime_suspended(dev))
+		return IRQ_NONE;
 
 	/* read the interrupt status */
 	irr = cc_ioread(drvdata, CC_REG(HOST_IRR));
