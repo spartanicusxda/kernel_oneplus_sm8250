@@ -14,6 +14,7 @@
 #include <linux/of.h>
 #include <linux/clk.h>
 #include <linux/of_address.h>
+#include <linux/of_device.h>
 #include <linux/pm_runtime.h>
 
 #include "cc_driver.h"
@@ -190,7 +191,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
 	u32 signature_val;
 	u64 dma_mask;
 	const struct cc_hw_data *hw_rev;
-	const struct of_device_id *dev_id;
 	struct clk *clk;
 	int rc = 0;
 
@@ -198,11 +198,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
 	if (!new_drvdata)
 		return -ENOMEM;
 
-	dev_id = of_match_node(arm_ccree_dev_of_match, np);
-	if (!dev_id)
-		return -ENODEV;
-
-	hw_rev = (struct cc_hw_data *)dev_id->data;
+	hw_rev = of_device_get_match_data(dev);
 	new_drvdata->hw_rev_name = hw_rev->name;
 	new_drvdata->hw_rev = hw_rev->rev;
 
