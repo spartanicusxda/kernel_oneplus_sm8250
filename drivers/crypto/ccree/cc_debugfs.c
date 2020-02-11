@@ -72,6 +72,7 @@ int cc_debugfs_init(struct cc_drvdata *drvdata)
 	regset->regs = debug_regs;
 	regset->nregs = ARRAY_SIZE(debug_regs);
 	regset->base = drvdata->cc_base;
+	regset->dev = dev;
 
 	ctx->dir = debugfs_create_dir(drvdata->plat_dev->name, cc_debugfs_dir);
 	if (!ctx->dir)
@@ -82,6 +83,8 @@ int cc_debugfs_init(struct cc_drvdata *drvdata)
 		debugfs_remove(ctx->dir);
 		return -ENFILE;
 	}
+	verset->base = drvdata->cc_base;
+	verset->dev = dev;
 
 	file = debugfs_create_bool("coherent", 0400, ctx->dir,
 				   &drvdata->coherent);
