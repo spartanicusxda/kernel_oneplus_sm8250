@@ -253,10 +253,9 @@ static inline void set_din_no_dma(struct cc_hw_desc *pdesc, u32 addr, u32 size)
  * @addr: DIN address
  * @size Data size in bytes
  */
-static inline void set_din_sram(struct cc_hw_desc *pdesc, dma_addr_t addr,
-				u32 size)
+static inline void set_din_sram(struct cc_hw_desc *pdesc, u32 addr, u32 size)
 {
-	pdesc->word[0] = (u32)addr;
+	pdesc->word[0] = addr;
 	pdesc->word[1] |= FIELD_PREP(WORD1_DIN_SIZE, size) |
 				FIELD_PREP(WORD1_DIN_DMA_MODE, DMA_SRAM);
 }
@@ -336,9 +335,8 @@ static inline void set_dout_dlli(struct cc_hw_desc *pdesc, dma_addr_t addr,
  * @last_ind: The last indication bit
  * @axi_sec: AXI secure bit
  */
-static inline void set_dout_mlli(struct cc_hw_desc *pdesc, dma_addr_t addr,
-				 u32 size, enum cc_axi_sec axi_sec,
-				 bool last_ind)
+static inline void set_dout_mlli(struct cc_hw_desc *pdesc, u32 addr, u32 size,
+				 enum cc_axi_sec axi_sec, bool last_ind)
 {
 	set_dout_type(pdesc, DMA_MLLI, addr, size, axi_sec);
 	pdesc->word[3] |= FIELD_PREP(WORD3_DOUT_LAST_IND, last_ind);

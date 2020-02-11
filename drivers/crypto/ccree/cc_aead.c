@@ -30,7 +30,7 @@
 #define ICV_VERIF_OK 0x01
 
 struct cc_aead_handle {
-	cc_sram_addr_t sram_workspace_addr;
+	u32 sram_workspace_addr;
 	struct list_head aead_list;
 };
 
@@ -792,7 +792,7 @@ static void cc_proc_authen_desc(struct aead_request *areq,
 		 * assoc. + iv + data -compact in one table
 		 * if assoclen is ZERO only IV perform
 		 */
-		cc_sram_addr_t mlli_addr = areq_ctx->assoc.sram_addr;
+		u32 mlli_addr = areq_ctx->assoc.sram_addr;
 		u32 mlli_nents = areq_ctx->assoc.mlli_nents;
 
 		if (areq_ctx->is_single_pass) {
@@ -1166,7 +1166,7 @@ static void cc_mlli_to_sram(struct aead_request *req,
 	    req_ctx->data_buff_type == CC_DMA_BUF_MLLI ||
 	    !req_ctx->is_single_pass) {
 		dev_dbg(dev, "Copy-to-sram: mlli_dma=%08x, mlli_size=%u\n",
-			(unsigned int)ctx->drvdata->mlli_sram_addr,
+			ctx->drvdata->mlli_sram_addr,
 			req_ctx->mlli_params.mlli_len);
 		/* Copy MLLI table host-to-sram */
 		hw_desc_init(&desc[*seq_size]);

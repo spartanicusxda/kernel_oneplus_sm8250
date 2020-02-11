@@ -113,7 +113,7 @@ struct cc_drvdata {
 	u32 fw_ver;
 	struct completion hw_queue_avail; /* wait for HW queue availability */
 	struct platform_device *plat_dev;
-	cc_sram_addr_t mlli_sram_addr;
+	u32 mlli_sram_addr;
 	void *buff_mgr_handle;
 	void *cipher_handle;
 	void *hash_handle;
