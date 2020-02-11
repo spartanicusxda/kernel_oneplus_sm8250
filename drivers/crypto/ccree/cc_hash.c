@@ -1939,13 +1939,26 @@ int cc_hash_alloc(struct cc_drvdata *drvdata)
 		if (driver_hash[alg].min_hw_rev > drvdata->hw_rev)
 			continue;
 
-		/* register hmac version */
-		t_alg = cc_alloc_hash_alg(&driver_hash[alg], dev, true);
-		if (IS_ERR(t_alg)) {
-			rc = PTR_ERR(t_alg);
-			dev_err(dev, "%s alg allocation failed\n",
-				driver_hash[alg].driver_name);
-			goto fail;
+		if (driver_hash[alg].is_mac) {
+			/* register hmac version */
+			t_alg = cc_alloc_hash_alg(&driver_hash[alg], dev, true);
+			if (IS_ERR(t_alg)) {
+				rc = PTR_ERR(t_alg);
+				dev_err(dev, "%s alg allocation failed\n",
+					driver_hash[alg].driver_name);
+				goto fail;
+			}
+			t_alg->drvdata = drvdata;
+
+			rc = crypto_register_ahash(&t_alg->ahash_alg);
+			if (rc) {
+				dev_err(dev, "%s alg registration failed\n",
+					driver_hash[alg].driver_name);
+				kfree(t_alg);
+				goto fail;
+			}
+
+			list_add_tail(&t_alg->entry, &hash_handle->hash_list);
 		}
 		t_alg->drvdata = drvdata;
 
@@ -1979,9 +1992,9 @@ int cc_hash_alloc(struct cc_drvdata *drvdata)
 				driver_hash[alg].driver_name);
 			kfree(t_alg);
 			goto fail;
-		} else {
-			list_add_tail(&t_alg->entry, &hash_handle->hash_list);
 		}
+
+		list_add_tail(&t_alg->entry, &hash_handle->hash_list);
 	}
 
 	return 0;
