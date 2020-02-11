@@ -135,8 +135,8 @@ void cc_copy_sg_portion(struct device *dev, u8 *dest, struct scatterlist *sg,
 {
 	u32 nents, lbytes;
 
-	nents = cc_get_sgl_nents(dev, sg, end, &lbytes);
-	sg_copy_buffer(sg, nents, (void *)dest, (end - to_skip + 1), to_skip,
+	nents = sg_nents_for_len(sg, end);
+	sg_copy_buffer(sg, nents, dest, (end - to_skip + 1), to_skip,
 		       (direct == CC_SG_TO_BUF));
 }
 
@@ -442,10 +442,9 @@ int cc_map_cipher_request(struct cc_drvdata *drvdata, void *ctx,
 
 	/* Map IV buffer */
 	if (ivsize) {
-		dump_byte_array("iv", (u8 *)info, ivsize);
+		dump_byte_array("iv", info, ivsize);
 		req_ctx->gen_ctx.iv_dma_addr =
-			dma_map_single(dev, (void *)info,
-				       ivsize, DMA_TO_DEVICE);
+			dma_map_single(dev, info, ivsize, DMA_BIDIRECTIONAL);
 		if (dma_mapping_error(dev, req_ctx->gen_ctx.iv_dma_addr)) {
 			dev_err(dev, "Mapping iv %u B at va=%pK for DMA failed\n",
 				ivsize, info);
