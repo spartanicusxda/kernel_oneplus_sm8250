@@ -304,6 +304,9 @@ int sysfs_emit(char *buf, const char *fmt, ...);
 __printf(3, 4)
 int sysfs_emit_at(char *buf, int at, const char *fmt, ...);
 
+int sysfs_file_change_owner(struct kobject *kobj, const char *name, kuid_t kuid,
+			    kgid_t kgid);
+
 #else /* CONFIG_SYSFS */
 
 static inline int sysfs_create_dir_ns(struct kobject *kobj, const void *ns)
@@ -512,6 +515,13 @@ static inline void sysfs_enable_ns(struct kernfs_node *kn)
 
 __printf(2, 3)
 static inline int sysfs_emit(char *buf, const char *fmt, ...)
+{
+	return 0;
+}
+
+static inline int sysfs_file_change_owner(struct kobject *kobj,
+					  const char *name, kuid_t kuid,
+					  kgid_t kgid)
 {
 	return 0;
 }
