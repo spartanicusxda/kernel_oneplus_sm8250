@@ -161,3 +161,10 @@ config PSTORE_LAST_KMSG
        help
          When the option is enabled, pstore will export a proc filesystem
          interface /proc/last_kmsg.
+
+config PSTORE_ZONE
+	tristate
+	depends on PSTORE
+	help
+	  The common layer for pstore/blk (and pstore/ram in the future)
+	  to manage storage in zones.
