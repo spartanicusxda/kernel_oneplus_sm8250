@@ -7,6 +7,7 @@
 
 typedef ssize_t (*pstore_zone_read_op)(char *, size_t, loff_t);
 typedef ssize_t (*pstore_zone_write_op)(const char *, size_t, loff_t);
+typedef ssize_t (*pstore_zone_erase_op)(size_t, loff_t);
 /**
  * struct pstore_zone_info - pstore/zone back-end driver structure
  *
@@ -23,8 +24,14 @@ typedef ssize_t (*pstore_zone_write_op)(const char *, size_t, loff_t);
  * @read:	The general read operation. Both of the function parameters
  *		@size and @offset are relative value to storage.
  *		On success, the number of bytes should be returned, others
- *		means error.
- * @write:	The same as @read, but -EBUSY means try to write again later.
+ *		mean error.
+ * @write:	The same as @read, but the following error number:
+ *		-EBUSY means try to write again later.
+ *		-ENOMSG means to try next zone.
+ * @erase:	The general erase operation for device with special removing
+ *		job. Both of the function parameters @size and @offset are
+ *		relative value to storage.
+ *		Return 0 on success and others on failure.
  * @panic_write:The write operation only used for panic case. It's optional
  *		if you do not care panic log. The parameters and return value
  *		are the same as @read.
@@ -41,6 +48,7 @@ struct pstore_zone_info {
 	unsigned long ftrace_size;
 	pstore_zone_read_op read;
 	pstore_zone_write_op write;
+	pstore_zone_erase_op erase;
 	pstore_zone_write_op panic_write;
 };
 
