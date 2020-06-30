@@ -105,8 +105,15 @@
  *   Direct tasks in a schedtune.prefer_idle=1 group through
  *   the EAS path for wakeup task placement. Otherwise, put
  *   those tasks through the mainline slow path.
+ * EAS_CRUCIAL
+ *   Direct tasks in a schedtune.crucial=1 group to the idle CPU
+ *   with the greatest original capacity. Unlike prefer_idle,
+ *   the crucial path iterates through all available CPUs. If a
+ *   crucial CPU is found, it takes precedence over a prefer_idle
+ *   selection.
  */
 #define SCHED_FEAT_EAS_PREFER_IDLE 1
+#define SCHED_FEAT_EAS_CRUCIAL 1
 
 /*
  * Request max frequency from schedutil whenever a RT task is running.
