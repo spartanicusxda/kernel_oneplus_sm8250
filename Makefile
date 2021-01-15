@@ -718,6 +718,12 @@ KBUILD_CFLAGS	+= -mllvm -polly \
 		   -mllvm -polly-detect-profitability-min-per-loop-insts=40 \
 		   -mllvm -polly-invariant-load-hoisting
 endif
+
+ifdef CONFIG_INLINE_OPTIMIZATION
+KBUILD_CFLAGS	+= -mllvm -inline-threshold=600
+KBUILD_CFLAGS	+= -mllvm -inlinehint-threshold=750
+endif
+
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
