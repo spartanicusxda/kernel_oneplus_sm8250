@@ -8144,14 +8144,14 @@ static ssize_t cpu_uclamp_write(struct kernfs_open_file *of, char *buf,
 	return nbytes;
 }
 
-static ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
+ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
 				    char *buf, size_t nbytes,
 				    loff_t off)
 {
 	return cpu_uclamp_write(of, buf, nbytes, off, UCLAMP_MIN);
 }
 
-static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
+ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
 				    char *buf, size_t nbytes,
 				    loff_t off)
 {
@@ -8186,13 +8186,13 @@ static inline void cpu_uclamp_print(struct seq_file *sf,
 	seq_printf(sf, "%llu.%0*u\n", percent, UCLAMP_PERCENT_SHIFT, rem);
 }
 
-static int cpu_uclamp_min_show(struct seq_file *sf, void *v)
+int cpu_uclamp_min_show(struct seq_file *sf, void *v)
 {
 	cpu_uclamp_print(sf, UCLAMP_MIN, false);
 	return 0;
 }
 
-static int cpu_uclamp_max_show(struct seq_file *sf, void *v)
+int cpu_uclamp_max_show(struct seq_file *sf, void *v)
 {
 	cpu_uclamp_print(sf, UCLAMP_MAX, false);
 	return 0;
@@ -8210,7 +8210,7 @@ static int cpu_uclamp_max_effective_show(struct seq_file *sf, void *v)
 	return 0;
 }
 
-static int cpu_uclamp_ls_write_u64(struct cgroup_subsys_state *css,
+int cpu_uclamp_ls_write_u64(struct cgroup_subsys_state *css,
 				   struct cftype *cftype, u64 ls)
 {
 	struct task_group *tg;
@@ -8223,7 +8223,7 @@ static int cpu_uclamp_ls_write_u64(struct cgroup_subsys_state *css,
 	return 0;
 }
 
-static u64 cpu_uclamp_ls_read_u64(struct cgroup_subsys_state *css,
+u64 cpu_uclamp_ls_read_u64(struct cgroup_subsys_state *css,
 				  struct cftype *cft)
 {
 	struct task_group *tg = css_tg(css);
@@ -8575,34 +8575,6 @@ static struct cftype cpu_legacy_files[] = {
 		.name = "rt_period_us",
 		.read_u64 = cpu_rt_period_read_uint,
 		.write_u64 = cpu_rt_period_write_uint,
-	},
-#endif
-#ifdef CONFIG_UCLAMP_TASK_GROUP
-	{
-		.name = "uclamp.min",
-		.flags = CFTYPE_NOT_ON_ROOT,
-		.seq_show = cpu_uclamp_min_show,
-		.write = cpu_uclamp_min_write,
-	},
-	{
-		.name = "uclamp.min.effective",
-		.seq_show = cpu_uclamp_min_effective_show,
-	},
-	{
-		.name = "uclamp.max",
-		.flags = CFTYPE_NOT_ON_ROOT,
-		.seq_show = cpu_uclamp_max_show,
-		.write = cpu_uclamp_max_write,
-	},
-	{
-		.name = "uclamp.latency_sensitive",
-		.flags = CFTYPE_NOT_ON_ROOT,
-		.read_u64 = cpu_uclamp_ls_read_u64,
-		.write_u64 = cpu_uclamp_ls_write_u64,
-	},
-	{
-		.name = "uclamp.max.effective",
-		.seq_show = cpu_uclamp_max_effective_show,
 	},
 #endif
 	{ }	/* Terminate */
