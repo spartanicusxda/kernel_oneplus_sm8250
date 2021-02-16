@@ -268,8 +268,8 @@ static const struct file_operations pm_qos_debug_fops = {
 };
 
 static inline int pm_qos_set_value_for_cpus(struct pm_qos_request *new_req,
-		struct pm_qos_constraints *c,
-		unsigned long *cpus, bool dev_req)
+					    struct pm_qos_constraints *c,
+					    unsigned long *cpus, bool dev_req)
 {
 	struct pm_qos_request *req;
 	unsigned long new_req_cpus;
@@ -282,7 +282,6 @@ static inline int pm_qos_set_value_for_cpus(struct pm_qos_request *new_req,
 
 	if (c != pm_qos_array[PM_QOS_CPU_DMA_LATENCY]->constraints)
 		return -EINVAL;
-
 	/*
 	 * pm_qos_set_value_for_cpus expects all c->list elements to be of type
 	 * pm_qos_request, however requests from device will contain elements
@@ -302,9 +301,6 @@ static inline int pm_qos_set_value_for_cpus(struct pm_qos_request *new_req,
 			changed = true;
 			break;
 		}
-
-		if (!(new_req_cpus &= ~affected_cpus))
-			return 0;
 	}
 
 	if (!changed)
