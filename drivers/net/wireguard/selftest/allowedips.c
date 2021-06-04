@@ -278,6 +278,7 @@ static __init bool randomized_test(void)
 			goto free;
 		}
 		kref_init(&peers[i]->refcount);
+		INIT_LIST_HEAD(&peers[i]->allowedips_list);
 	}
 
 	mutex_lock(&mutex);
@@ -315,7 +316,7 @@ static __init bool randomized_test(void)
 			if (wg_allowedips_insert_v4(&t,
 						    (struct in_addr *)mutated,
 						    cidr, peer, &mutex) < 0) {
-				pr_err("allowedips random malloc: FAIL\n");
+				pr_err("allowedips random self-test malloc: FAIL\n");
 				goto free_locked;
 			}
 			if (horrible_allowedips_insert_v4(&h,
