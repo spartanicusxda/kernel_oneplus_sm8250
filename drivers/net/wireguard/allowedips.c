@@ -69,60 +69,6 @@ static void root_remove_peer_lists(struct allowedips_node *root)
 	}
 }
 
-static void walk_remove_by_peer(struct allowedips_node __rcu **top,
-				struct wg_peer *peer, struct mutex *lock)
-{
-#define REF(p) rcu_access_pointer(p)
-#define DEREF(p) rcu_dereference_protected(*(p), lockdep_is_held(lock))
-#define PUSH(p) ({                                                             \
-		WARN_ON(IS_ENABLED(DEBUG) && len >= 128);                      \
-		stack[len++] = p;                                              \
-	})
-
-	struct allowedips_node __rcu **stack[128], **nptr;
-	struct allowedips_node *node, *prev;
-	unsigned int len;
-
-	if (unlikely(!peer || !REF(*top)))
-		return;
-
-	for (prev = NULL, len = 0, PUSH(top); len > 0; prev = node) {
-		nptr = stack[len - 1];
-		node = DEREF(nptr);
-		if (!node) {
-			--len;
-			continue;
-		}
-		if (!prev || REF(prev->bit[0]) == node ||
-		    REF(prev->bit[1]) == node) {
-			if (REF(node->bit[0]))
-				PUSH(&node->bit[0]);
-			else if (REF(node->bit[1]))
-				PUSH(&node->bit[1]);
-		} else if (REF(node->bit[0]) == prev) {
-			if (REF(node->bit[1]))
-				PUSH(&node->bit[1]);
-		} else {
-			if (rcu_dereference_protected(node->peer,
-				lockdep_is_held(lock)) == peer) {
-				RCU_INIT_POINTER(node->peer, NULL);
-				list_del_init(&node->peer_list);
-				if (!node->bit[0] || !node->bit[1]) {
-					rcu_assign_pointer(*nptr, DEREF(
-					       &node->bit[!REF(node->bit[0])]));
-					kfree_rcu(node, rcu);
-					node = DEREF(nptr);
-				}
-			}
-			--len;
-		}
-	}
-
-#undef REF
-#undef DEREF
-#undef PUSH
-}
-
 static unsigned int fls128(u64 a, u64 b)
 {
 	return a ? fls64(a) + 64U : fls64(b);
@@ -237,7 +183,8 @@ static int add(struct allowedips_node __rcu **trie, u8 bits, const u8 *key,
 		RCU_INIT_POINTER(node->peer, peer);
 		list_add_tail(&node->peer_list, &peer->allowedips_list);
 		copy_and_assign_cidr(node, key, cidr, bits);
-		connect_node(trie, 2, node);
+		rcu_assign_pointer(node->parent_bit, trie);
+		rcu_assign_pointer(*trie, node);
 		return 0;
 	}
 	if (node_placement(*trie, key, cidr, bits, &node, lock)) {
@@ -256,10 +203,10 @@ static int add(struct allowedips_node __rcu **trie, u8 bits, const u8 *key,
 	if (!node) {
 		down = rcu_dereference_protected(*trie, lockdep_is_held(lock));
 	} else {
-		const u8 bit = choose(node, key);
-		down = rcu_dereference_protected(node->bit[bit], lockdep_is_held(lock));
+		down = rcu_dereference_protected(CHOOSE_NODE(node, key), lockdep_is_held(lock));
 		if (!down) {
-			connect_node(&node->bit[bit], bit, newnode);
+			rcu_assign_pointer(newnode->parent_bit, &CHOOSE_NODE(node, key));
+			rcu_assign_pointer(CHOOSE_NODE(node, key), newnode);
 			return 0;
 		}
 	}
@@ -267,12 +214,37 @@ static int add(struct allowedips_node __rcu **trie, u8 bits, const u8 *key,
 	parent = node;
 
 	if (newnode->cidr == cidr) {
-		choose_and_connect_node(newnode, down);
-		if (!parent)
-			connect_node(trie, 2, newnode);
-		else
-			choose_and_connect_node(parent, newnode);
+		rcu_assign_pointer(down->parent_bit, &CHOOSE_NODE(newnode, down->bits));
+		rcu_assign_pointer(CHOOSE_NODE(newnode, down->bits), down);
+		if (!parent) {
+			rcu_assign_pointer(newnode->parent_bit, trie);
+			rcu_assign_pointer(*trie, newnode);
+		} else {
+			rcu_assign_pointer(newnode->parent_bit, &CHOOSE_NODE(parent, newnode->bits));
+			rcu_assign_pointer(CHOOSE_NODE(parent, newnode->bits), newnode);
+		}
 		return 0;
+	}
+
+	node = kzalloc(sizeof(*node), GFP_KERNEL);
+	if (unlikely(!node)) {
+		list_del(&newnode->peer_list);
+		kfree(newnode);
+		return -ENOMEM;
+	}
+	INIT_LIST_HEAD(&node->peer_list);
+	copy_and_assign_cidr(node, newnode->bits, cidr, bits);
+
+	rcu_assign_pointer(down->parent_bit, &CHOOSE_NODE(node, down->bits));
+	rcu_assign_pointer(CHOOSE_NODE(node, down->bits), down);
+	rcu_assign_pointer(newnode->parent_bit, &CHOOSE_NODE(node, newnode->bits));
+	rcu_assign_pointer(CHOOSE_NODE(node, newnode->bits), newnode);
+	if (!parent) {
+		rcu_assign_pointer(node->parent_bit, trie);
+		rcu_assign_pointer(*trie, node);
+	} else {
+		rcu_assign_pointer(node->parent_bit, &CHOOSE_NODE(parent, node->bits));
+		rcu_assign_pointer(CHOOSE_NODE(parent, node->bits), node);
 	}
 
 	node = kmem_cache_zalloc(node_cache, GFP_KERNEL);
@@ -347,8 +319,7 @@ int wg_allowedips_insert_v6(struct allowedips *table, const struct in6_addr *ip,
 void wg_allowedips_remove_by_peer(struct allowedips *table,
 				  struct wg_peer *peer, struct mutex *lock)
 {
-	struct allowedips_node *node, *child, **parent_bit, *parent, *tmp;
-	bool free_parent;
+	struct allowedips_node *node, *child, *tmp;
 
 	if (list_empty(&peer->allowedips_list))
 		return;
@@ -358,29 +329,19 @@ void wg_allowedips_remove_by_peer(struct allowedips *table,
 		RCU_INIT_POINTER(node->peer, NULL);
 		if (node->bit[0] && node->bit[1])
 			continue;
-		child = rcu_dereference_protected(node->bit[!rcu_access_pointer(node->bit[0])],
-						  lockdep_is_held(lock));
+		child = rcu_dereference_protected(
+				node->bit[!rcu_access_pointer(node->bit[0])],
+				lockdep_is_held(lock));
 		if (child)
-			child->parent_bit_packed = node->parent_bit_packed;
-		parent_bit = (struct allowedips_node **)(node->parent_bit_packed & ~3UL);
-		*parent_bit = child;
-		parent = (void *)parent_bit -
-			 offsetof(struct allowedips_node, bit[node->parent_bit_packed & 1]);
-		free_parent = !rcu_access_pointer(node->bit[0]) &&
-			      !rcu_access_pointer(node->bit[1]) &&
-			      (node->parent_bit_packed & 3) <= 1 &&
-			      !rcu_access_pointer(parent->peer);
-		if (free_parent)
-			child = rcu_dereference_protected(
-					parent->bit[!(node->parent_bit_packed & 1)],
-					lockdep_is_held(lock));
-		call_rcu(&node->rcu, node_free_rcu);
-		if (!free_parent)
-			continue;
-		if (child)
-			child->parent_bit_packed = parent->parent_bit_packed;
-		*(struct allowedips_node **)(parent->parent_bit_packed & ~3UL) = child;
-		call_rcu(&parent->rcu, node_free_rcu);
+			child->parent_bit = node->parent_bit;
+		*rcu_dereference_protected(node->parent_bit, lockdep_is_held(lock)) = child;
+		kfree_rcu(node, rcu);
+
+		/* TODO: Note that we currently don't walk up and down in order to
+		 * free any potential filler nodes. This means that this function
+		 * doesn't free up as much as it could, which could be revisited
+		 * at some point.
+		 */
 	}
 }
 
