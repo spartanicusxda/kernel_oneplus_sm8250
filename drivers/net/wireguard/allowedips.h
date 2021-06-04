@@ -22,7 +22,8 @@ struct allowedips_node {
 	u8 bits[16] __aligned(__alignof(u64));
 	u8 cidr, bit_at_a, bit_at_b, bitlen;
 
-	/* Keep rarely used list at bottom to be beyond cache line. */
+	/* Keep rarely used members at bottom to be beyond cache line. */
+	unsigned long parent_bit_packed;
 	union {
 		struct list_head peer_list;
 		struct rcu_head rcu;
@@ -33,7 +34,7 @@ struct allowedips {
 	struct allowedips_node __rcu *root4;
 	struct allowedips_node __rcu *root6;
 	u64 seq;
-};
+} __aligned(4); /* We pack the lower 2 bits of &root, but m68k only gives 16-bit alignment. */
 
 void wg_allowedips_init(struct allowedips *table);
 void wg_allowedips_free(struct allowedips *table, struct mutex *mutex);
