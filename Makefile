@@ -294,10 +294,24 @@ else
 scripts/Kbuild.include: ;
 include scripts/Kbuild.include
 
+-include include/config/auto.conf
+
+ifdef CONFIG_CUSTOM_VERSION
+# Custom kernel version
+CVERSION = 5
+CPATCHLEVEL = 10
+CSUBLEVEL = 43
+CEXTRAVERSION =
+CNAME = Opossums on Parade
+endif
+
 # Read KERNELRELEASE from include/config/kernel.release (if it exists)
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+ifeq ($(CONFIG_CUSTOM_VERSION),y)
+KERNELVERSION = $(CVERSION)$(if $(CPATCHLEVEL),.$(CPATCHLEVEL)$(if $(CSUBLEVEL),.$(CSUBLEVEL)))$(CEXTRAVERSION)
+else
 KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
-export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
+endif
 
 include scripts/subarch.include
 
