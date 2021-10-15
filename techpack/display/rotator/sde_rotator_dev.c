@@ -1255,7 +1255,6 @@ void sde_rotator_pm_qos_add(struct sde_rot_data_type *rot_mdata)
 {
 	struct pm_qos_request *req;
 	u32 cpu_mask;
-	int cpu;
 
 	if (!rot_mdata) {
 		SDEROT_DBG("invalid rot device or context\n");
