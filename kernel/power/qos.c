@@ -269,7 +269,10 @@ static const struct file_operations pm_qos_debug_fops = {
 
 static inline int pm_qos_set_value_for_cpus(struct pm_qos_request *new_req,
 					    struct pm_qos_constraints *c,
-					    unsigned long *cpus, bool dev_req)
+					    unsigned long *cpus,
+					    unsigned long new_cpus,
+					    enum pm_qos_req_action new_action,
+						bool dev_req)
 {
 	struct pm_qos_request *req;
 	unsigned long new_req_cpus;
@@ -295,16 +298,27 @@ static inline int pm_qos_set_value_for_cpus(struct pm_qos_request *new_req,
 	if (dev_req)
 		return 0;
 
-	new_req_cpus = atomic_read(&new_req->cpus_affine);
-	for_each_cpu(cpu, to_cpumask(&new_req_cpus)) {
-		if (c->target_per_cpu[cpu] != new_req->node.prio) {
-			changed = true;
-			break;
-		}
+	if (new_cpus) {
+		/* cpus_affine changed, so the old CPUs need to be refreshed */
+		new_req_cpus = atomic_read(&new_req->cpus_affine) | new_cpus;
+		atomic_set(&new_req->cpus_affine, new_cpus);
+	} else {
+		new_req_cpus = atomic_read(&new_req->cpus_affine);
 	}
 
-	if (!changed)
-		return 0;
+	if (new_action != PM_QOS_REMOVE_REQ) {
+		bool changed = false;
+
+		for_each_cpu(cpu, to_cpumask(&new_req_cpus)) {
+			if (c->target_per_cpu[cpu] != new_req->node.prio) {
+				changed = true;
+				break;
+			}
+		}
+
+		if (!changed)
+			return 0;
+	}
 
 	plist_for_each_entry(req, &c->list, node) {
 		unsigned long affected_cpus;
