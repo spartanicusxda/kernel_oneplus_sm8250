@@ -9252,7 +9252,6 @@ bool is_fastchg_allowed(struct smb_charger *chg)
 		&& cap > DASH_VALID_CAPACITY_HIG_THRESHOLD
 		&& (get_boot_mode() != MSM_BOOT_MODE_CHARGE)) {
 		pr_err("capacity high, swarp adapter.");
-		// For show charge time countdown.
 		chg->dash_present = true;
 		return false;
 	}
