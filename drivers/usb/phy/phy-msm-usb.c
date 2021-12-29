@@ -3166,8 +3166,6 @@ msm_otg_phy_drive_dp_pulse(struct msm_otg *motg, unsigned int pulse_width)
 	return 0;
 }
 
-#define DP_PULSE_WIDTH_MSEC 200
-
 static void msm_otg_set_vbus_state(int online)
 {
 	struct msm_otg *motg = the_msm_otg;
