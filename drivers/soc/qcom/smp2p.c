@@ -160,6 +160,7 @@ struct qcom_smp2p {
 	struct regmap *ipc_regmap;
 	int ipc_offset;
 	int ipc_bit;
+	struct wakeup_source *ws;	
 
 	struct mbox_client mbox_client;
 	struct mbox_chan *mbox_chan;
