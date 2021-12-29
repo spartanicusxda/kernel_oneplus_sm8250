@@ -2293,22 +2293,6 @@ static int dwc3_msm_prepare_suspend(struct dwc3_msm *mdwc)
 	struct dwc3 *dwc = platform_get_drvdata(mdwc->dwc3);
 	unsigned long timeout;
 	u32 reg = 0;
-	bool ssphy0_sus = false, ssphy1_sus = false;
-
-	/* Allow SSPHY(s) to go to P3 state if SSPHY autosuspend is disabled */
-	if (dwc->dis_u3_susphy_quirk) {
-		/* Clear in_p3 and allow SSPHY suspend explicitly */
-		atomic_set(&mdwc->in_p3, 0);
-
-		ssphy0_sus = dwc3_msm_ssphy_autosuspend(mdwc, 0);
-		if (mdwc->ss_phy1)
-			ssphy1_sus = dwc3_msm_ssphy_autosuspend(mdwc, 1);
-
-		if (!mdwc->dual_port)
-			atomic_set(&mdwc->in_p3, ssphy0_sus);
-		else
-			atomic_set(&mdwc->in_p3, ssphy0_sus & ssphy1_sus);
-	}
 
 	if ((mdwc->in_host_mode || mdwc->in_device_mode)
 			&& dwc3_msm_is_superspeed(mdwc) && !mdwc->in_restart) {
