@@ -702,6 +702,12 @@ else
 KBUILD_CFLAGS   += -O3
 KBUILD_AFLAGS   += -O3
 KBUILD_LDFLAGS  += -O3
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS   += -O3
+else
+KBUILD_CFLAGS   += -O2
+endif
+endif
 
 ifeq ($(cc-name),clang)
 ifdef CONFIG_LLVM_POLLY
