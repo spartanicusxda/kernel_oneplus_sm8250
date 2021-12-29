@@ -2357,24 +2357,6 @@ static void dwc3_set_phy_speed_flags(struct dwc3_msm *mdwc)
 					mdwc->hs_phy->flags |= PHY_HSFS_MODE;
 				else if (DEV_LOWSPEED(reg))
 					mdwc->hs_phy->flags |= PHY_LS_MODE;
-				}
-
-			if (reg & PORT_CONNECT) {
-				if (DEV_HIGHSPEED(reg) || DEV_FULLSPEED(reg)) {
-					if (i % (num_ports / 2))
-						mdwc->hs_phy1->flags |=
-								PHY_HSFS_MODE;
-					else
-						mdwc->hs_phy->flags |=
-								PHY_HSFS_MODE;
-				} else if (DEV_LOWSPEED(reg)) {
-					if (i % (num_ports / 2))
-						mdwc->hs_phy1->flags |=
-								PHY_LS_MODE;
-					else
-						mdwc->hs_phy->flags |=
-								PHY_LS_MODE;
-				}
 			}
 		}
 	} else {
