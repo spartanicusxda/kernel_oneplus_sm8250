@@ -1383,6 +1383,9 @@ unsigned int uclamp_task(struct task_struct *p)
 {
 	unsigned long util;
 
+	if (task_has_rt_policy(p))
+		return uclamp_eff_value(p, UCLAMP_MAX);
+
 	util = task_util_est(p);
 	util = max(util, uclamp_eff_value(p, UCLAMP_MIN));
 	util = min(util, uclamp_eff_value(p, UCLAMP_MAX));
