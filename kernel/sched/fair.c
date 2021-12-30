@@ -6224,6 +6224,17 @@ schedtune_cpu_margin_with(unsigned long util, int cpu, struct task_struct *p)
 	return margin;
 }
 
+static inline int
+schedtune_cpu_margin(unsigned long util, int cpu)
+{
+	int boost = schedtune_cpu_boost(cpu);
+
+	if (boost == 0 || boost == 2)
+		return 0;
+
+	return schedtune_margin(util, boost, capacity_orig_of(cpu));
+}
+
 long schedtune_task_margin(struct task_struct *task)
 {
 	int boost = schedtune_task_boost(task);
@@ -6263,7 +6274,55 @@ schedtune_cpu_margin_with(unsigned long util, int cpu, struct task_struct *p)
 	return 0;
 }
 
+static inline int
+schedtune_cpu_margin(unsigned long util, int cpu)
+{
+	return 0;
+}
+
+static inline int
+schedtune_task_margin(struct task_struct *task)
+{
+	return 0;
+}
+
 #endif /* CONFIG_SCHED_TUNE */
+
+unsigned long
+boosted_cpu_util(int cpu, struct sched_walt_cpu_load *walt_load)
+{
+	unsigned long util = cpu_util_freq(cpu);
+	long margin = schedtune_cpu_margin(util, cpu);
+
+	trace_sched_boost_cpu(cpu, util, margin);
+
+	if (sched_feat(SCHEDTUNE_BOOST_UTIL))
+		return util + margin;
+	else
+		return util;
+}
+
+static inline unsigned long
+boosted_task_util(struct task_struct *task)
+{
+#ifdef CONFIG_UCLAMP_TASK_GROUP
+	unsigned long util = task_util_est(task);
+	unsigned long util_min = uclamp_eff_value(task, UCLAMP_MIN);
+	unsigned long util_max = uclamp_eff_value(task, UCLAMP_MAX);
+
+	return clamp(util, util_min, util_max);
+#else
+	unsigned long util = task_util_est(task);
+	long margin = schedtune_task_margin(task);
+
+	trace_sched_boost_task(task, util, margin);
+
+	if (sched_feat(SCHEDTUNE_BOOST_UTIL))
+		return util + margin;
+	else
+		return util;
+#endif
+}
 
 static unsigned long cpu_util_without(int cpu, struct task_struct *p);
 
@@ -7499,7 +7558,7 @@ static void find_best_target(struct sched_domain *sd, cpumask_t *cpus,
 	if (target_cpu != -1 && !idle_cpu(target_cpu) &&
 			best_idle_cpu != -1) {
 		curr_tsk = READ_ONCE(cpu_rq(target_cpu)->curr);
-		if (curr_tsk && schedtune_task_boost_rcu_locked(curr_tsk))
+		if (curr_tsk)
 			target_cpu = best_idle_cpu;
 	}
 
