@@ -1074,12 +1074,6 @@ static int _opp_is_duplicate(struct device *dev, struct dev_pm_opp *new_opp,
 		if (new_opp->rate < opp->rate)
 			return 0;
 
-		/* Duplicate OPPs */
-		dev_warn(dev, "%s: duplicate OPPs detected. Existing: freq: %lu, volt: %lu, enabled: %d. New: freq: %lu, volt: %lu, enabled: %d\n",
-			 __func__, opp->rate, opp->supplies[0].u_volt,
-			 opp->available, new_opp->rate,
-			 new_opp->supplies[0].u_volt, new_opp->available);
-
 		/* Should we compare voltages for all regulators here ? */
 		return opp->available &&
 		       new_opp->supplies[0].u_volt == opp->supplies[0].u_volt ? -EBUSY : -EEXIST;

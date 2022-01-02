@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
 # CPUfreq core
+
+ccflags-y += -Ofast
+
 obj-$(CONFIG_CPU_FREQ)			+= cpufreq.o freq_table.o
 
 # CPUfreq stats

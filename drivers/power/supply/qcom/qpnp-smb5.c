@@ -598,7 +598,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	OF_PROP_READ(node, "ffc-fast-cutoff-ma",
 		chg->FFC_FAST_CUTOFF, retval, 1);
 #endif
-	pr_info("T1:%d, T2:%d, T3:%d, fcc1:%d, fcc1:%d, cut1:%d, cut2:%d,full:%d\n",
+	pr_debug("T1:%d, T2:%d, T3:%d, fcc1:%d, fcc1:%d, cut1:%d, cut2:%d,full:%d\n",
 		chg->FFC_TEMP_T1, chg->FFC_TEMP_T2, chg->FFC_TEMP_T3,
 		chg->FFC_NOR_FCC, chg->FFC_WARM_FCC, chg->FFC_NORMAL_CUTOFF,
 		chg->FFC_WARM_CUTOFF, chg->FFC_VBAT_FULL);
@@ -771,12 +771,12 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 					&chg->sw_iterm_ma);
 	if (rc < 0)
 		chg->sw_iterm_ma = 130;
-	pr_info("sw_iterm_ma=%d,check_batt_full_by_sw=%d",
+	pr_debug("sw_iterm_ma=%d,check_batt_full_by_sw=%d",
 				chg->sw_iterm_ma, chg->check_batt_full_by_sw);
 	rc = of_property_read_u32(node,
 					"op,little_cold_term_current",
 					&chg->little_cold_iterm_ma);
-	pr_info("little_cold_iterm_ma=%d", chg->little_cold_iterm_ma);
+	pr_debug("little_cold_iterm_ma=%d", chg->little_cold_iterm_ma);
 /* otg-icl set 1A if battery lower than 15%*/
 	chg->OTG_ICL_CTRL = of_property_read_bool(node,
 						"op,otg-icl-ctrl-enable");
@@ -792,7 +792,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 			chg->OTG_NORMAL_BAT_ICL, retval, 1);
 	if (retval < 0)
 		chg->OTG_NORMAL_BAT_ICL = -EINVAL;
-	pr_info("OTG_ICL:enable:%d,CapThr:%d,LowThr:%d,NorThr:%d\n",
+	pr_debug("OTG_ICL:enable:%d,CapThr:%d,LowThr:%d,NorThr:%d\n",
 		chg->OTG_ICL_CTRL,
 		chg->OTG_LOW_BAT,
 		chg->OTG_LOW_BAT_ICL,
@@ -814,35 +814,35 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	chg->support_sdram_store_soc = of_property_read_bool(node,
 						"op,support-sdram-store-soc");
 
-	pr_info("T0=%d, T1=%d, T2=%d, T3=%d, T4=%d, T5=%d, T6=%d\n",
+	pr_debug("T0=%d, T1=%d, T2=%d, T3=%d, T4=%d, T5=%d, T6=%d\n",
 		chg->BATT_TEMP_T0, chg->BATT_TEMP_T1, chg->BATT_TEMP_T2,
 		chg->BATT_TEMP_T3, chg->BATT_TEMP_T4, chg->BATT_TEMP_T5,
 		chg->BATT_TEMP_T6);
-	pr_info("BATT_TEMP_LITTLE_COLD=%d, %d, %d\n",
+	pr_debug("BATT_TEMP_LITTLE_COLD=%d, %d, %d\n",
 		chg->ibatmax[BATT_TEMP_LITTLE_COLD],
 		chg->vbatmax[BATT_TEMP_LITTLE_COLD],
 		chg->vbatdet[BATT_TEMP_LITTLE_COLD]);
-	pr_info("BATT_TEMP_COOL=%d, %d, %d\n",
+	pr_debug("BATT_TEMP_COOL=%d, %d, %d\n",
 		chg->ibatmax[BATT_TEMP_COOL],
 		chg->vbatmax[BATT_TEMP_COOL],
 		chg->vbatdet[BATT_TEMP_COOL]);
-	pr_info("BATT_TEMP_LITTLE_COOL=%d, %d, %d\n",
+	pr_debug("BATT_TEMP_LITTLE_COOL=%d, %d, %d\n",
 		chg->ibatmax[BATT_TEMP_LITTLE_COOL],
 		chg->vbatmax[BATT_TEMP_LITTLE_COOL],
 		chg->vbatdet[BATT_TEMP_LITTLE_COOL]);
-	pr_info("BATT_TEMP_PRE_NORMAL=%d, %d, %d\n",
+	pr_debug("BATT_TEMP_PRE_NORMAL=%d, %d, %d\n",
 		chg->ibatmax[BATT_TEMP_PRE_NORMAL],
 		chg->vbatmax[BATT_TEMP_PRE_NORMAL],
 		chg->vbatdet[BATT_TEMP_PRE_NORMAL]);
-	pr_info("BATT_TEMP_NORMAL=%d, %d, %d\n",
+	pr_debug("BATT_TEMP_NORMAL=%d, %d, %d\n",
 		chg->ibatmax[BATT_TEMP_NORMAL],
 		chg->vbatmax[BATT_TEMP_NORMAL],
 		chg->vbatdet[BATT_TEMP_NORMAL]);
-	pr_info("BATT_TEMP_WARM=%d, %d, %d\n",
+	pr_debug("BATT_TEMP_WARM=%d, %d, %d\n",
 		chg->ibatmax[BATT_TEMP_WARM],
 		chg->vbatmax[BATT_TEMP_WARM],
 		chg->vbatdet[BATT_TEMP_WARM]);
-	pr_info("cutoff_volt_with_charger=%d, disable-pd=%d\n",
+	pr_debug("cutoff_volt_with_charger=%d, disable-pd=%d\n",
 		smbchg_cutoff_volt_with_charger, chg->pd_disabled);
 
 	OF_PROP_READ(node, "op,fv-offset-voltage-mv",
@@ -850,7 +850,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->fv_offset_voltage_mv <= 0)
 		chg->fv_offset_voltage_mv =
 			FV_OFFSET_VOLTAGE;
-	pr_info("fv_offset_voltage_mv=%d\n",
+	pr_debug("fv_offset_voltage_mv=%d\n",
 		chg->fv_offset_voltage_mv);
 
 	OF_PROP_READ(node, "op,normal-check-interval-period",
@@ -858,7 +858,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->normal_check_interval_period <= 0)
 		chg->normal_check_interval_period =
 			NORMAL_CHECK_INTERVAL_PERIOD;
-	pr_info("normal_check_interval_period=%d\n",
+	pr_debug("normal_check_interval_period=%d\n",
 		chg->normal_check_interval_period);
 
 	OF_PROP_READ(node, "op,fast-check-interval-period",
@@ -866,7 +866,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->fast_check_interval_period <= 0)
 		chg->fast_check_interval_period =
 			FAST_CHECK_INTERVAL_PERIOD;
-	pr_info("fast_check_interval_period=%d\n",
+	pr_debug("fast_check_interval_period=%d\n",
 		chg->fast_check_interval_period);
 
 	OF_PROP_READ(node, "op,fast-check-threshold-temp",
@@ -874,7 +874,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->fast_check_threshold_temp <= 0)
 		chg->fast_check_threshold_temp =
 			FAST_CHECK_THRESHOLD_TEMP;
-	pr_info("fast_check_threshold_temp=%d\n",
+	pr_debug("fast_check_threshold_temp=%d\n",
 		chg->fast_check_threshold_temp);
 
 	OF_PROP_READ(node, "op,high-temp-short-check-timeout",
@@ -882,7 +882,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->high_temp_short_check_timeout <= 0)
 		chg->high_temp_short_check_timeout =
 			HIGH_TEMP_SHORT_CHECK_TIMEOUT;
-	pr_info("high_temp_short_check_timeout=%d\n",
+	pr_debug("high_temp_short_check_timeout=%d\n",
 		chg->high_temp_short_check_timeout);
 
 	OF_PROP_READ(node, "op,first-protect-connecter-temp",
@@ -890,7 +890,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->first_protect_connecter_temp <= 0)
 		chg->first_protect_connecter_temp =
 			FIRST_PROTECT_CONNECTER_TEMP;
-	pr_info("first_protect_connecter_temp=%d\n",
+	pr_debug("first_protect_connecter_temp=%d\n",
 		chg->first_protect_connecter_temp);
 
 	OF_PROP_READ(node, "op,second-protect-connecter-temp",
@@ -898,7 +898,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->second_protect_connecter_temp <= 0)
 		chg->second_protect_connecter_temp =
 			SECOND_PROTECT_CONNECTER_TEMP;
-	pr_info("second_protect_connecter_temp=%d\n",
+	pr_debug("second_protect_connecter_temp=%d\n",
 		chg->second_protect_connecter_temp);
 
 	OF_PROP_READ(node, "op,second-protect-interval-temp",
@@ -906,7 +906,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->second_protect_interval_temp <= 0)
 		chg->second_protect_interval_temp =
 			SECOND_PROTECT_INTERVAL_TEMP;
-	pr_info("second_protect_interval_temp=%d\n",
+	pr_debug("second_protect_interval_temp=%d\n",
 		chg->second_protect_interval_temp);
 
 	OF_PROP_READ(node, "op,third-protect-rise-rate",
@@ -914,7 +914,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->third_protect_rise_rate <= 0)
 		chg->third_protect_rise_rate =
 			THIRD_PROTECT_RISE_RATE;
-	pr_info("third_protect_rise_rate=%d\n",
+	pr_debug("third_protect_rise_rate=%d\n",
 		chg->third_protect_rise_rate);
 
 	OF_PROP_READ(node, "op,third-protect-loop-temp",
@@ -922,7 +922,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->third_protect_loop_temp <= 0)
 		chg->third_protect_loop_temp =
 			THIRD_PROTECT_LOOP_TEMP;
-	pr_info("third_protect_loop_temp=%d\n",
+	pr_debug("third_protect_loop_temp=%d\n",
 		chg->third_protect_loop_temp);
 
 	OF_PROP_READ(node, "op,third-protect-interval-temp",
@@ -930,7 +930,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->third_protect_interval_temp <= 0)
 		chg->third_protect_interval_temp =
 			THIRD_PROTECT_INTERVAL_TEMP;
-	pr_info("third_protect_interval_temp=%d\n",
+	pr_debug("third_protect_interval_temp=%d\n",
 		chg->third_protect_interval_temp);
 
 	OF_PROP_READ(node, "op,third-protect-base-temp",
@@ -938,49 +938,49 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->third_protect_base_temp <= 0)
 		chg->third_protect_base_temp =
 			THIRD_PROTECT_BASE_TEMP;
-	pr_info("third_protect_base_temp=%d\n",
+	pr_debug("third_protect_base_temp=%d\n",
 		chg->third_protect_base_temp);
 
 	OF_PROP_READ(node, "op,skin-thermal-high-threshold",
 			chg->skin_thermal_high_threshold, retval, 1);
 	if (chg->skin_thermal_high_threshold <= 0)
 		chg->skin_thermal_high_threshold = 39;
-	pr_info("skin_thermal_high_threshold=%d\n",
+	pr_debug("skin_thermal_high_threshold=%d\n",
 		chg->skin_thermal_high_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-pre-high-threshold",
 			chg->skin_thermal_pre_high_threshold, retval, 1);
 	if (chg->skin_thermal_pre_high_threshold <= 0)
 		chg->skin_thermal_pre_high_threshold = 38;
-	pr_info("skin_thermal_pre_high_threshold=%d\n",
+	pr_debug("skin_thermal_pre_high_threshold=%d\n",
 		chg->skin_thermal_pre_high_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-warm-threshold",
 			chg->skin_thermal_warm_threshold, retval, 1);
 	if (chg->skin_thermal_warm_threshold <= 0)
 		chg->skin_thermal_warm_threshold = 37;
-	pr_info("skin_thermal_warm_threshold=%d\n",
+	pr_debug("skin_thermal_warm_threshold=%d\n",
 		chg->skin_thermal_warm_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-pre-warm-threshold",
 		chg->skin_thermal_pre_warm_threshold, retval, 1);
 	if (chg->skin_thermal_pre_warm_threshold <= 0)
 		chg->skin_thermal_pre_warm_threshold = 36;
-	pr_info("skin_thermal_pre_warm_threshold=%d\n",
+	pr_debug("skin_thermal_pre_warm_threshold=%d\n",
 		chg->skin_thermal_pre_warm_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-medium-threshold",
 			chg->skin_thermal_medium_threshold, retval, 1);
 	if (chg->skin_thermal_medium_threshold <= 0)
 		chg->skin_thermal_medium_threshold = 34;
-	pr_info("skin_thermal_medium_threshold=%d\n",
+	pr_debug("skin_thermal_medium_threshold=%d\n",
 		chg->skin_thermal_medium_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-normal-threshold",
 			chg->skin_thermal_normal_threshold, retval, 1);
 	if (chg->skin_thermal_normal_threshold <= 0)
 		chg->skin_thermal_normal_threshold = 33;
-	pr_info("skin_thermal_normal_threshold=%d\n",
+	pr_debug("skin_thermal_normal_threshold=%d\n",
 		chg->skin_thermal_normal_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-lcdoff-high-threshold",
@@ -988,7 +988,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->skin_thermal_lcdoff_high_threshold <= 0)
 		chg->skin_thermal_lcdoff_high_threshold =
 			SKIN_THERMAL_HIGH;
-	pr_info("skin_thermal_lcdoff_high_threshold=%d\n",
+	pr_debug("skin_thermal_lcdoff_high_threshold=%d\n",
 		chg->skin_thermal_lcdoff_high_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-lcdoff-pre-high-threshold",
@@ -996,7 +996,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->skin_thermal_lcdoff_pre_high_threshold <= 0)
 		chg->skin_thermal_lcdoff_pre_high_threshold =
 			SKIN_THERMAL_PRE_HIGH;
-	pr_info("skin_thermal_lcdoff_pre_high_threshold=%d\n",
+	pr_debug("skin_thermal_lcdoff_pre_high_threshold=%d\n",
 		chg->skin_thermal_lcdoff_pre_high_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-lcdoff-medium-threshold",
@@ -1004,7 +1004,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->skin_thermal_lcdoff_medium_threshold <= 0)
 		chg->skin_thermal_lcdoff_medium_threshold =
 			SKIM_THERMAL_MEDIUM;
-	pr_info("skin_thermal_lcdoff_medium_threshold=%d\n",
+	pr_debug("skin_thermal_lcdoff_medium_threshold=%d\n",
 		chg->skin_thermal_lcdoff_medium_threshold);
 
 	OF_PROP_READ(node, "op,skin-thermal-lcdoff-normal-threshold",
@@ -1012,133 +1012,133 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->skin_thermal_lcdoff_normal_threshold <= 0)
 		chg->skin_thermal_lcdoff_normal_threshold =
 			SKIN_THERMAL_NORMAL;
-	pr_info("skin_thermal_lcdoff_normal_threshold=%d\n",
+	pr_debug("skin_thermal_lcdoff_normal_threshold=%d\n",
 		chg->skin_thermal_lcdoff_normal_threshold);
 
 	chg->enable_dash_current_adjust = of_property_read_bool(node,
 					"op,enable-dash-current-dynamic-adjust");
-	pr_info("enable_dash_current_adjust=%d\n",
+	pr_debug("enable_dash_current_adjust=%d\n",
 		chg->enable_dash_current_adjust);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-high-threshold",
 			chg->nor_skin_thermal_high_threshold, retval, 1);
 	if (chg->nor_skin_thermal_high_threshold <= 0)
 		chg->nor_skin_thermal_high_threshold = 39;
-	pr_info("nor_skin_thermal_high_threshold=%d\n",
+	pr_debug("nor_skin_thermal_high_threshold=%d\n",
 		chg->nor_skin_thermal_high_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-pre-high-threshold",
 			chg->nor_skin_thermal_pre_high_threshold, retval, 1);
 	if (chg->nor_skin_thermal_pre_high_threshold <= 0)
 		chg->nor_skin_thermal_pre_high_threshold = 38;
-	pr_info("nor_skin_thermal_pre_high_threshold=%d\n",
+	pr_debug("nor_skin_thermal_pre_high_threshold=%d\n",
 		chg->nor_skin_thermal_pre_high_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-warm-threshold",
 			chg->nor_skin_thermal_warm_threshold, retval, 1);
 	if (chg->nor_skin_thermal_warm_threshold <= 0)
 		chg->nor_skin_thermal_warm_threshold = 37;
-	pr_info("nor_skin_thermal_warm_threshold=%d\n",
+	pr_debug("nor_skin_thermal_warm_threshold=%d\n",
 		chg->nor_skin_thermal_warm_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-pre-warm-threshold",
 		chg->nor_skin_thermal_pre_warm_threshold, retval, 1);
 	if (chg->nor_skin_thermal_pre_warm_threshold <= 0)
 		chg->nor_skin_thermal_pre_warm_threshold = 36;
-	pr_info("nor_skin_thermal_pre_warm_threshold=%d\n",
+	pr_debug("nor_skin_thermal_pre_warm_threshold=%d\n",
 		chg->nor_skin_thermal_pre_warm_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-medium-threshold",
 			chg->nor_skin_thermal_medium_threshold, retval, 1);
 	if (chg->nor_skin_thermal_medium_threshold <= 0)
 		chg->nor_skin_thermal_medium_threshold = 34;
-	pr_info("nor_skin_thermal_medium_threshold=%d\n",
+	pr_debug("nor_skin_thermal_medium_threshold=%d\n",
 		chg->nor_skin_thermal_medium_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-normal-threshold",
 			chg->nor_skin_thermal_normal_threshold, retval, 1);
 	if (chg->nor_skin_thermal_normal_threshold <= 0)
 		chg->nor_skin_thermal_normal_threshold = 33;
-	pr_info("nor_skin_thermal_normal_threshold=%d\n",
+	pr_debug("nor_skin_thermal_normal_threshold=%d\n",
 		chg->nor_skin_thermal_normal_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-lcdoff-high-threshold",
 			chg->nor_skin_thermal_lcdoff_high_threshold, retval, 1);
 	if (chg->nor_skin_thermal_lcdoff_high_threshold <= 0)
 		chg->nor_skin_thermal_lcdoff_high_threshold = 45;
-	pr_info("nor_skin_thermal_lcdoff_high_threshold=%d\n",
+	pr_debug("nor_skin_thermal_lcdoff_high_threshold=%d\n",
 		chg->nor_skin_thermal_lcdoff_high_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-lcdoff-pre-high-threshold",
 			chg->nor_skin_thermal_lcdoff_pre_high_threshold, retval, 1);
 	if (chg->nor_skin_thermal_lcdoff_pre_high_threshold <= 0)
 		chg->nor_skin_thermal_lcdoff_pre_high_threshold = 44;
-	pr_info("nor_skin_thermal_lcdoff_pre_high_threshold=%d\n",
+	pr_debug("nor_skin_thermal_lcdoff_pre_high_threshold=%d\n",
 		chg->nor_skin_thermal_lcdoff_pre_high_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-lcdoff-warm-threshold",
 		chg->nor_skin_thermal_lcdoff_warm_threshold, retval, 1);
 	if (chg->nor_skin_thermal_lcdoff_warm_threshold <= 0)
 		chg->nor_skin_thermal_lcdoff_warm_threshold = 44;
-	pr_info("nor_skin_thermal_lcdoff_warm_threshold=%d\n",
+	pr_debug("nor_skin_thermal_lcdoff_warm_threshold=%d\n",
 		chg->nor_skin_thermal_lcdoff_warm_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-lcdoff-pre-warm-threshold",
 		chg->nor_skin_thermal_lcdoff_pre_warm_threshold, retval, 1);
 	if (chg->nor_skin_thermal_lcdoff_pre_warm_threshold <= 0)
 		chg->nor_skin_thermal_lcdoff_pre_warm_threshold = 42;
-	pr_info("nor_skin_thermal_lcdoff_pre_warm_threshold=%d\n",
+	pr_debug("nor_skin_thermal_lcdoff_pre_warm_threshold=%d\n",
 		chg->nor_skin_thermal_lcdoff_pre_warm_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-lcdoff-medium-threshold",
 			chg->nor_skin_thermal_lcdoff_medium_threshold, retval, 1);
 	if (chg->nor_skin_thermal_lcdoff_medium_threshold <= 0)
 		chg->nor_skin_thermal_lcdoff_medium_threshold = 42;
-	pr_info("nor_skin_thermal_lcdoff_medium_threshold=%d\n",
+	pr_debug("nor_skin_thermal_lcdoff_medium_threshold=%d\n",
 		chg->nor_skin_thermal_lcdoff_medium_threshold);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-lcdoff-normal-threshold",
 			chg->nor_skin_thermal_lcdoff_normal_threshold, retval, 1);
 	if (chg->nor_skin_thermal_lcdoff_normal_threshold <= 0)
 		chg->nor_skin_thermal_lcdoff_normal_threshold = 41;
-	pr_info("nor_skin_thermal_lcdoff_normal_threshold=%d\n",
+	pr_debug("nor_skin_thermal_lcdoff_normal_threshold=%d\n",
 		chg->nor_skin_thermal_lcdoff_normal_threshold);
 
 	OF_PROP_READ(node, "op,nor-call-on-current-ma",
 			chg->nor_call_on_current_ma, retval, 1);
 	if (chg->nor_call_on_current_ma <= 0)
 		chg->nor_call_on_current_ma = 500;
-	pr_info("nor_call_on_current_ma=%d\n",
+	pr_debug("nor_call_on_current_ma=%d\n",
 		chg->nor_call_on_current_ma);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-high-current-ma",
 			chg->nor_skin_thermal_hi_current_ma, retval, 1);
 	if (chg->nor_skin_thermal_hi_current_ma <= 0)
 		chg->nor_skin_thermal_hi_current_ma = 500;
-	pr_info("nor_skin_thermal_hi_current_ma=%d\n",
+	pr_debug("nor_skin_thermal_hi_current_ma=%d\n",
 		chg->nor_skin_thermal_hi_current_ma);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-warm-current-ma",
 			chg->nor_skin_thermal_wrm_current_ma, retval, 1);
 	if (chg->nor_skin_thermal_wrm_current_ma <= 0)
 		chg->nor_skin_thermal_wrm_current_ma = 800;
-	pr_info("nor_skin_thermal_wrm_current_ma=%d\n",
+	pr_debug("nor_skin_thermal_wrm_current_ma=%d\n",
 		chg->nor_skin_thermal_wrm_current_ma);
 
 	OF_PROP_READ(node, "op,nor-skin-thermal-medium-current-ma",
 			chg->nor_skin_thermal_med_current_ma, retval, 1);
 	if (chg->nor_skin_thermal_med_current_ma <= 0)
 		chg->nor_skin_thermal_med_current_ma = 1000;
-	pr_info("nor_skin_thermal_med_current_ma=%d\n",
+	pr_debug("nor_skin_thermal_med_current_ma=%d\n",
 		chg->nor_skin_thermal_med_current_ma);
 
 	chg->enable_nor_current_adjust = of_property_read_bool(node,
 					"op,enable-nor-current-dynamic-adjust");
-	pr_info("enable_nor_current_adjust=%d\n",
+	pr_debug("enable_nor_current_adjust=%d\n",
 		chg->enable_nor_current_adjust);
 	chg->check_slow_charge = of_property_read_bool(node,
 							"op,slowy-charge-check");
-	pr_info("op,slowy-charge-check=%d\n",
+	pr_debug("op,slowy-charge-check=%d\n",
 				chg->check_slow_charge);
 
 	OF_PROP_READ(node, "op,full-count-sw-numb",
@@ -1146,7 +1146,7 @@ static int smb5_parse_dt_misc(struct smb5 *chip, struct device_node *node)
 	if (chg->full_count_sw_num <= 0)
 		chg->full_count_sw_num =
 			FULL_COUNT_SW_NUM;
-	pr_info("full_count_sw_num=%d\n",
+	pr_debug("full_count_sw_num=%d\n",
 		chg->full_count_sw_num);
 	/* disable step_chg */
 	chg->step_chg_enabled = false;
