@@ -210,10 +210,10 @@ static int add(struct allowedips_node __rcu **trie, u8 bits, const u8 *key,
 	if (!node) {
 		down = rcu_dereference_protected(*trie, lockdep_is_held(lock));
 	} else {
-		down = rcu_dereference_protected(CHOOSE_NODE(node, key), lockdep_is_held(lock));
+		const u8 bit = choose(node, key);
+		down = rcu_dereference_protected(node->bit[bit], lockdep_is_held(lock));
 		if (!down) {
-			rcu_assign_pointer(newnode->parent_bit, &CHOOSE_NODE(node, key));
-			rcu_assign_pointer(CHOOSE_NODE(node, key), newnode);
+			connect_node(&node->bit[bit], bit, newnode);
 			return 0;
 		}
 	}
@@ -221,37 +221,12 @@ static int add(struct allowedips_node __rcu **trie, u8 bits, const u8 *key,
 	parent = node;
 
 	if (newnode->cidr == cidr) {
-		rcu_assign_pointer(down->parent_bit, &CHOOSE_NODE(newnode, down->bits));
-		rcu_assign_pointer(CHOOSE_NODE(newnode, down->bits), down);
-		if (!parent) {
-			rcu_assign_pointer(newnode->parent_bit, trie);
-			rcu_assign_pointer(*trie, newnode);
-		} else {
-			rcu_assign_pointer(newnode->parent_bit, &CHOOSE_NODE(parent, newnode->bits));
-			rcu_assign_pointer(CHOOSE_NODE(parent, newnode->bits), newnode);
-		}
+		choose_and_connect_node(newnode, down);
+		if (!parent)
+			connect_node(trie, 2, newnode);
+		else
+			choose_and_connect_node(parent, newnode);
 		return 0;
-	}
-
-	node = kmem_cache_zalloc(node_cache, GFP_KERNEL);
-	if (unlikely(!node)) {
-		list_del(&newnode->peer_list);
-		kmem_cache_free(node_cache, newnode);
-		return -ENOMEM;
-	}
-	INIT_LIST_HEAD(&node->peer_list);
-	copy_and_assign_cidr(node, newnode->bits, cidr, bits);
-
-	rcu_assign_pointer(down->parent_bit, &CHOOSE_NODE(node, down->bits));
-	rcu_assign_pointer(CHOOSE_NODE(node, down->bits), down);
-	rcu_assign_pointer(newnode->parent_bit, &CHOOSE_NODE(node, newnode->bits));
-	rcu_assign_pointer(CHOOSE_NODE(node, newnode->bits), newnode);
-	if (!parent) {
-		rcu_assign_pointer(node->parent_bit, trie);
-		rcu_assign_pointer(*trie, node);
-	} else {
-		rcu_assign_pointer(node->parent_bit, &CHOOSE_NODE(parent, node->bits));
-		rcu_assign_pointer(CHOOSE_NODE(parent, node->bits), node);
 	}
 
 	node = kmem_cache_zalloc(node_cache, GFP_KERNEL);

@@ -20,6 +20,7 @@ struct allowedips_node {
 
 	/* Keep rarely used members at bottom to be beyond cache line. */
 	struct allowedips_node *__rcu *parent_bit;
+	unsigned long parent_bit_packed;
 	union {
 		struct list_head peer_list;
 		struct rcu_head rcu;
