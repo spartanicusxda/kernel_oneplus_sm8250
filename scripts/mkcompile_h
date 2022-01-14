@@ -45,7 +45,7 @@ else
 	LINUX_COMPILE_BY=$KBUILD_BUILD_USER
 fi
 if test -z "$KBUILD_BUILD_HOST"; then
-	LINUX_COMPILE_HOST=`hostname`
+	LINUX_COMPILE_HOST=$(cat /etc/hostname 2>/dev/null || echo "linux")
 else
 	LINUX_COMPILE_HOST=$KBUILD_BUILD_HOST
 fi
