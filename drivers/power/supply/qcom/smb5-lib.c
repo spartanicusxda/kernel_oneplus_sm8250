@@ -9816,8 +9816,17 @@ static void set_usb_switch(struct smb_charger *chg, bool enable)
 
 	if (!fast_charger) {
 		pr_err("no fast_charger register found\n");
+		if (chg->typec_mode == POWER_SUPPLY_TYPEC_SOURCE_HIGH ||
+				chg->typec_mode == POWER_SUPPLY_TYPEC_SOURCE_MEDIUM)
+			chg->disconnect_pd = true;
 		return;
 	}
+
+	if (chg->pd_active) {
+		pr_info("%s:pd_active return\n", __func__);
+		return;
+	}
+
 	if (chg->wireless_present) {
 		pr_info("wireless charge, don't set usb switch\n");
 		return;
