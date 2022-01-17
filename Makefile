@@ -297,7 +297,7 @@ include scripts/Kbuild.include
 # Read KERNELRELEASE from include/config/kernel.release (if it exists)
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
 
-include include/config/auto.conf
+-include include/config/auto.conf
 
 ifeq ($(CONFIG_HAVE_CUSTOM_RELEASE),y)
 CKERNELRELEASE = ${CONFIG_CUSTOM_RELEASE}
