@@ -44,6 +44,25 @@
 #include <linux/static_key.h>
 
 #include <trace/events/tcp.h>
+/* People can turn this off for buggy TCP's found in printers etc. */
+int sysctl_tcp_retrans_collapse __read_mostly = 1;
+
+/* People can turn this on to work with those rare, broken TCPs that
+ * interpret the window field as a signed quantity.
+ */
+int sysctl_tcp_workaround_signed_windows __read_mostly = 0;
+
+/* Default TSQ limit of four TSO segments */
+int sysctl_tcp_limit_output_bytes __read_mostly = 262144;
+
+/* This limits the percentage of the congestion window which we
+ * will allow a single TSO frame to consume.  Building TSO frames
+ * which are too large can cause TCP streams to be bursty.
+ */
+int sysctl_tcp_tso_win_divisor __read_mostly = 3;
+
+/* By default, RFC2861 behavior.  */
+int sysctl_tcp_slow_start_after_idle __read_mostly = 0;
 
 static bool tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
 			   int push_one, gfp_t gfp);
