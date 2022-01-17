@@ -624,14 +624,6 @@ static inline void ufshcd_remove_non_printable(char *val)
 		*val = ' ';
 }
 
-static void ufshcd_add_cmd_upiu_trace(struct ufs_hba *hba, unsigned int tag,
-		const char *str)
-{
-	struct utp_upiu_req *rq = hba->lrb[tag].ucd_req_ptr;
-
-	trace_ufshcd_upiu(dev_name(hba->dev), str, &rq->header, &rq->sc.cdb);
-}
-
 static void ufshcd_add_query_upiu_trace(struct ufs_hba *hba, unsigned int tag,
 		const char *str)
 {
@@ -761,22 +753,6 @@ static void ufshcd_print_cmd_log(struct ufs_hba *hba)
 #else
 static void ufshcd_cmd_log_init(struct ufs_hba *hba)
 {
-}
-
-static void __ufshcd_cmd_log(struct ufs_hba *hba, char *str, char *cmd_type,
-			     unsigned int tag, u8 cmd_id, u8 idn, u8 lun,
-			     sector_t lba, int transfer_len)
-{
-	struct ufshcd_cmd_log_entry entry;
-
-	entry.str = str;
-	entry.lba = lba;
-	entry.cmd_id = cmd_id;
-	entry.transfer_len = transfer_len;
-	entry.doorbell = ufshcd_readl(hba, REG_UTP_TRANSFER_REQ_DOOR_BELL);
-	entry.tag = tag;
-
-	ufshcd_add_command_trace(hba, &entry);
 }
 
 static void ufshcd_dme_cmd_log(struct ufs_hba *hba, char *str, u8 cmd_id)
