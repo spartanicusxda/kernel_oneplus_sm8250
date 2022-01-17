@@ -152,6 +152,8 @@ enum print_reason {
 #define DCIN_ICL_MAX_UA			1500000
 #define DCIN_ICL_STEP_UA		100000
 #define ROLE_REVERSAL_DELAY_MS		500
+#define MAIN_ICL_MIN			100000
+#define MAIN_ICL_MIN_VOTER		"MAIN_ICL_MIN_VOTER"
 
 enum smb_mode {
 	PARALLEL_MASTER = 0,
@@ -939,6 +941,9 @@ struct smb_charger {
 	int			reconnect_count;
 	bool		tried_fastchg;
 	bool		icon_debounce;
+	/* used for bq charge pump solution */
+	struct usbpd		*pd;
+	bool			use_bq_pump;
 };
 
 struct op_pps {
