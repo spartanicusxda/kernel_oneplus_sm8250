@@ -286,11 +286,11 @@ fi
 # Update version
 info GEN .version
 if [ -r .version ]; then
-	VERSION=80085
+	VERSION=1
 	echo $VERSION > .version
 else
 	rm -f .version
-	echo 80085 > .version
+	echo 1 > .version
 fi;
 
 # final build of init/
