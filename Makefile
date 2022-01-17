@@ -729,8 +729,8 @@ KBUILD_CFLAGS	+= -mllvm -polly \
 endif
 
 ifdef CONFIG_INLINE_OPTIMIZATION
-KBUILD_CFLAGS	+= -mllvm -inline-threshold=1000
-KBUILD_CFLAGS	+= -mllvm -inlinehint-threshold=750
+KBUILD_CFLAGS	+= -mllvm -inline-threshold=3000
+KBUILD_CFLAGS	+= -mllvm -inlinehint-threshold=2250
 endif
 
 endif
@@ -907,7 +907,15 @@ lto-clang-flags	:= -flto
 endif
 lto-clang-flags += -fvisibility=default $(call cc-option, -fsplit-lto-unit)
 
+# Limit inlining across translation units to reduce binary size
+LD_FLAGS_LTO_CLANG := -mllvm -import-instr-limit=60
+
+KBUILD_LDFLAGS += $(LD_FLAGS_LTO_CLANG)
+KBUILD_LDFLAGS_MODULE += $(LD_FLAGS_LTO_CLANG)
+
 KBUILD_LDFLAGS_MODULE += -T scripts/module-lto.lds
+
+KBUILD_LDS_MODULE += $(srctree)/scripts/module-lto.lds
 
 # allow disabling only clang LTO where needed
 DISABLE_LTO_CLANG := -fno-lto
