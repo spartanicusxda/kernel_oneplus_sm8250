@@ -734,7 +734,6 @@ KBUILD_CFLAGS	+= -mllvm -polly \
 		   -mllvm -polly-detect-profitability-min-per-loop-insts=40 \
 		   -mllvm -polly-invariant-load-hoisting
 endif
-endif
 
 ifdef CONFIG_INLINE_OPTIMIZATION
 KBUILD_CFLAGS  += -mllvm -inline-threshold=2500
