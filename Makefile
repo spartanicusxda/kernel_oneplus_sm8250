@@ -729,8 +729,8 @@ KBUILD_CFLAGS	+= -mllvm -polly \
 endif
 
 ifdef CONFIG_INLINE_OPTIMIZATION
-KBUILD_CFLAGS	+= -mllvm -inline-threshold=3000
-KBUILD_CFLAGS	+= -mllvm -inlinehint-threshold=2250
+KBUILD_CFLAGS  += -mllvm -inline-threshold=2500
+KBUILD_CFLAGS  += -mllvm -inlinehint-threshold=2000
 endif
 
 endif
