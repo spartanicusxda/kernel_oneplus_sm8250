@@ -717,8 +717,6 @@ endif
 ifeq ($(cc-name),clang)
 ifdef CONFIG_LLVM_POLLY
 KBUILD_CFLAGS	+= -mllvm -polly \
-		   -mllvm -polly-parallel -lgomp \
-		   -mllvm -polly-omp-backend=LLVM \
 		   -mllvm -polly-num-threads=0 \
 		   -mllvm -polly-scheduling=dynamic \
 		   -mllvm -polly-scheduling-chunksize=1 \
