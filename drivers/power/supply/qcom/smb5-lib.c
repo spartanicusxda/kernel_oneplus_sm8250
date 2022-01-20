@@ -2745,11 +2745,7 @@ int smblib_get_prop_batt_status(struct smb_charger *chg,
 			val->intval = POWER_SUPPLY_STATUS_FULL;
 			break;
 		default:
-			pr_err("[%s] usb online=%d real_charger_type=%d\n", __func__, usb_online, chg->real_charger_type);
-			if (chg->real_charger_type == POWER_SUPPLY_TYPE_USB_PD)
-				val->intval = POWER_SUPPLY_STATUS_CHARGING;
-			else
-				val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
+			val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
 			break;
 		}
 		return rc;
@@ -4101,8 +4097,6 @@ int smblib_get_prop_usb_online(struct smb_charger *chg,
 {
 	int rc = 0;
 	u8 stat;
-	int usb_present = 0;
-	union power_supply_propval pval = {0, };
 
 	if (get_client_vote_locked(chg->usb_icl_votable, USER_VOTER) == 0) {
 		val->intval = false;
@@ -4121,22 +4115,6 @@ int smblib_get_prop_usb_online(struct smb_charger *chg,
 	if (chg->icon_debounce) {
 		val->intval = 1;
 		return rc;
-	}
-	if (chg->use_bq_pump) {
-		rc = smblib_get_prop_usb_present(chg, &pval);
-		if (rc < 0) {
-			smblib_err(chg, "Couldn't get usb present rc = %d\n", rc);
-			return rc;
-		}
-
-		usb_present = pval.intval;
-
-		if (usb_present && chg->use_bq_pump
-					&& (get_client_vote_locked(chg->usb_icl_votable,
-							MAIN_ICL_MIN_VOTER) == MAIN_ICL_MIN)) {
-			val->intval = true;
-			return rc;
-		}
 	}
 	if (is_client_vote_enabled_locked(chg->usb_icl_votable,
 					CHG_TERMINATION_VOTER)) {

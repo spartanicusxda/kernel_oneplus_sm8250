@@ -138,8 +138,6 @@ enum {
 	FCC_STEPPING_IN_PROGRESS,
 };
 
-#define ONLY_PM660_CURRENT_UA 2000000
-
 enum {
 	PARALLEL_INPUT_MODE,
 	PARALLEL_OUTPUT_MODE,
@@ -422,10 +420,6 @@ static void split_settled(struct pl_data *chip)
 	 */
 	if (slave_ua > chip->pl_settled_ua) {
 		pval.intval = main_ua;
-		if (chip->pl_mode == POWER_SUPPLY_PL_USBIN_USBIN)
-			if (get_effective_result_locked(chip->pl_disable_votable) &&
-					(pval.intval > ONLY_PM660_CURRENT_UA))
-				pval.intval = ONLY_PM660_CURRENT_UA;
 		/* Set ICL on main charger */
 		rc = power_supply_set_property(chip->main_psy,
 				POWER_SUPPLY_PROP_CURRENT_MAX, &pval);
