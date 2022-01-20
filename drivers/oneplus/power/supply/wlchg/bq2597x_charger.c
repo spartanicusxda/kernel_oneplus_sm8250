@@ -374,30 +374,6 @@ static int bq2597x_enable_wdt(struct bq2597x *bq, bool enable)
 }
 EXPORT_SYMBOL_GPL(bq2597x_enable_wdt);
 
-static int bq2597x_set_wdt(struct bq2597x *bq, int ms)
-{
-	int ret;
-	u8 val;
-
-	if (ms == 500)
-		val = BQ2597X_WATCHDOG_0P5S;
-	else if (ms == 1000)
-		val = BQ2597X_WATCHDOG_1S;
-	else if (ms == 5000)
-		val = BQ2597X_WATCHDOG_5S;
-	else if (ms == 30000)
-		val = BQ2597X_WATCHDOG_30S;
-	else
-		val = BQ2597X_WATCHDOG_30S;
-
-	val <<= BQ2597X_WATCHDOG_SHIFT;
-
-	ret = bq2597x_update_bits(bq, BQ2597X_REG_0B, BQ2597X_WATCHDOG_MASK,
-				  val);
-	return ret;
-}
-EXPORT_SYMBOL_GPL(bq2597x_set_wdt);
-
 static int bq2597x_enable_batovp(struct bq2597x *bq, bool enable)
 {
 	int ret;
