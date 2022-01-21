@@ -9818,6 +9818,29 @@ static void set_usb_switch(struct smb_charger *chg, bool enable)
 		pr_err("no fast_charger register found\n");
 		return;
 	}
+
+	/*
+	 * PD charging fix
+	 *
+	 * @luk1337 - Base headset+charge fix
+	 * @RealJohnGalt - Fix PD charging (sm8150)
+	 * @FraSharp - Fix PD charging and WARP/DASH charging (sm8250)
+	 *
+	 * Only enter here if not WARP/DASH charging
+	 */
+	if (!is_charger_not_match(chg) &&
+		chg->real_charger_type != POWER_SUPPLY_TYPE_DASH) {
+		if (chg->pd_active) {
+			pr_debug("%s:pd_active return\n", __func__);
+			if (chg->typec_mode == POWER_SUPPLY_TYPEC_SOURCE_HIGH
+		    		|| chg->typec_mode ==
+					POWER_SUPPLY_TYPEC_SOURCE_MEDIUM) {
+				chg->disconnect_pd = true;
+                	}
+			return;
+        	}
+	}
+
 	if (chg->wireless_present) {
 		pr_info("wireless charge, don't set usb switch\n");
 		return;
