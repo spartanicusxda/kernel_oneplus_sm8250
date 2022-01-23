@@ -58,12 +58,25 @@ config THREAD_INFO_IN_TASK
 
 menu "Custom configs"
 
+config HAVE_CUSTOM_CONFIGS
+	bool "Support for custom configs"
+	default n
+
 config HAVE_CUSTOM_RELEASE
         bool "Support for custom kernelrelease"
+	depends on HAVE_CUSTOM_CONFIGS
+	default y
 
 config CUSTOM_RELEASE
         string "Custom kernelrelease"
-        depends on HAVE_CUSTOM_RELEASE
+        depends on HAVE_CUSTOM_RELEASE && HAVE_CUSTOM_CONFIGS
+
+config ALWAYS_COMPILE_MKCOMPILE
+	bool "Always compile mkcompile_h"
+	depends on HAVE_CUSTOM_CONFIGS
+	default n
+	help
+	  Mainly used to update build timestamp on every build
 
 endmenu # "Custom configs"
 
