@@ -7361,7 +7361,7 @@ void set_selinux(int value)
         selnl_notify_setenforce(value);
         selinux_status_update_setenforce(&selinux_state, value);
         if (!value)
-                call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
+                call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
 }
 
 /* SELinux requires early initialization in order to label
