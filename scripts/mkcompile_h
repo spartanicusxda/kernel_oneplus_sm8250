@@ -7,6 +7,8 @@ SMP=$3
 PREEMPT=$4
 CC=$5
 LD=$6
+# Always Recompile Mkcompile_h
+ACM=$7
 
 vecho() { [ "${quiet}" = "silent_" ] || echo "$@" ; }
 
@@ -33,6 +35,8 @@ if [ -z "$KBUILD_BUILD_VERSION" ]; then
 else
 	VERSION=$KBUILD_BUILD_VERSION
 fi
+
+
 
 if [ -z "$KBUILD_BUILD_TIMESTAMP" ]; then
 	TIMESTAMP=`date`
@@ -90,7 +94,7 @@ UTS_TRUNCATE="cut -b -$UTS_LEN"
 # changed comment in the
 # first line.
 
-if [ -z "$KBUILD_BUILD_TIMESTAMP" ]; then
+if [ ACM == 'y' ]; then
    IGNORE_PATTERN="UTS_VERSION"
 else
    IGNORE_PATTERN="NOT_A_PATTERN_TO_BE_MATCHED"
