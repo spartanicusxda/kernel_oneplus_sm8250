@@ -130,7 +130,6 @@ config ARM64
 	select HAVE_CMPXCHG_DOUBLE
 	select HAVE_CMPXCHG_LOCAL
 	select HAVE_CONTEXT_TRACKING
-	select HAVE_DEBUG_BUGVERBOSE
 	select HAVE_DEBUG_KMEMLEAK
 	select HAVE_DMA_CONTIGUOUS
 	select HAVE_DYNAMIC_FTRACE
@@ -1372,6 +1371,9 @@ endmenu
 
 menu "ARMv8.2 architectural features"
 
+config AS_HAS_ARMV8_2
+       def_bool $(cc-option,-Wa$(comma)-march=armv8.2-a)
+
 config ARM64_UAO
 	bool "Enable support for User Access Override (UAO)"
 	default y
@@ -1392,12 +1394,6 @@ config ARM64_UAO
 	  The feature is detected at runtime, the kernel will use the
 	  regular load/store instructions if the cpu does not implement the
 	  feature.
-
-config AS_HAS_ARMV8_2
-       def_bool $(cc-option,-Wa$(comma)-march=armv8.2-a)
-
-config AS_HAS_SHA3
-       def_bool $(as-instr,.arch armv8.2-a+sha3)
 
 config ARM64_PMEM
 	bool "Enable support for persistent memory"
