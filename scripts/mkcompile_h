@@ -36,8 +36,6 @@ else
 	VERSION=$KBUILD_BUILD_VERSION
 fi
 
-
-
 if [ -z "$KBUILD_BUILD_TIMESTAMP" ]; then
 	TIMESTAMP=`date`
 else
