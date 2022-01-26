@@ -404,6 +404,9 @@ READELF		= $(CROSS_COMPILE)readelf
 OBJSIZE		= $(CROSS_COMPILE)size
 STRIP		= $(CROSS_COMPILE)strip
 endif
+ifneq ($(LD_IS_MOLD),)
+LD		= mold
+endif
 LEX		= flex
 YACC		= bison
 AWK		= awk
