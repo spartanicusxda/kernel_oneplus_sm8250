@@ -78,7 +78,7 @@ config HAVE_CUSTOM_RELEASE
 
 config CUSTOM_RELEASE
         string "Custom kernelrelease"
-        depends on HAVE_CUSTOM_RELEASE && HAVE_CUSTOM_CONFIGS
+        depends on HAVE_CUSTOM_RELEASE
 
 config ALWAYS_COMPILE_MKCOMPILE
 	bool "Always compile mkcompile_h"
