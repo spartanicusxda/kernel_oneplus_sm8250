@@ -87,6 +87,16 @@ config ALWAYS_COMPILE_MKCOMPILE
 	help
 	  Mainly used to update build timestamp on every build
 
+config HAVE_CUSTOM_LD
+	bool "Support for custom LD in kernel version"
+	depends on HAVE_CUSTOM_CONFIGS
+	default y
+
+config CUSTOM_LD
+	string "Custom LD in kernel version"
+	depends on HAVE_CUSTOM_LD
+	default $(LD)
+
 endmenu # "Custom configs"
 
 menu "General setup"
