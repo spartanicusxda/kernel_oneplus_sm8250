@@ -9,7 +9,6 @@
 #
 # Normal rules (sorted alphabetically)
 #
-out/**
 .*
 *.a
 *.asn1.[ch]
@@ -136,3 +135,6 @@ all.config
 
 # fetched Android config fragments
 kernel/configs/android-*.cfg
+
+# Compiled files directory
+out/**
