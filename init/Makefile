@@ -30,6 +30,10 @@ $(obj)/version.o: include/generated/compile.h
 
 -include include/config/auto.conf
 
+ifneq ($(CONFIG_CUSTOM_LD),)
+LD = $(CONFIG_CUSTOM_LD)
+endif
+
        chk_compile.h = :
  quiet_chk_compile.h = echo '  CHK     $@'
 silent_chk_compile.h = :
@@ -37,5 +41,5 @@ include/generated/compile.h: FORCE
 	@$($(quiet)chk_compile.h)
 	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkcompile_h $@	\
 	"$(UTS_MACHINE)" "$(CONFIG_SMP)" "$(CONFIG_PREEMPT)"	\
-	"$(CC) $(KBUILD_CFLAGS)" "$(CONFIG_CUSTOM_LD)"		\
+	"$(CC) $(KBUILD_CFLAGS)" "$(LD)"			\
 	"$(CONFIG_ALWAYS_COMPILE_MKCOMPILE)"
