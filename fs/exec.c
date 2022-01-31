@@ -84,6 +84,7 @@ static atomic_t zygote64_pid;
 #define HWCOMPOSER_BIN_PREFIX "/vendor/bin/hw/vendor.qti.hardware.display.composer"
 #define UDFPS_BIN_PREFIX "/vendor/bin/hw/android.hardware.biometrics.fingerprint"
 #define SFLINGER_BIN_PREFIX "/system/bin/surfaceflinger"
+#define NETD_BIN_PREFIX "/system/bin/netd"
 #define DEX2OAT64_BIN_PREFIX "/apex/com.android.art/bin/dex2oat64"
 
 bool is_zygote_pid(pid_t pid)
@@ -1871,10 +1872,15 @@ static int __do_execve_file(int fd, struct filename *filename,
 			current->pc_flags |= PC_PRIME_AFFINE;
 			set_cpus_allowed_ptr(current, cpu_prime_mask);
 		} else if (unlikely(!strncmp(filename->name,
+					   NETD_BIN_PREFIX,
+					   strlen(NETD_BIN_PREFIX)))) {
+			current->pc_flags |= PC_PERF_AFFINE;
+			set_cpus_allowed_ptr(current, cpu_perf_mask);
+		} else if (unlikely(!strncmp(filename->name,
 					   DEX2OAT64_BIN_PREFIX,
 					   strlen(DEX2OAT64_BIN_PREFIX)))) {
 			current->pc_flags |= PC_PERF_AFFINE;
-			set_cpus_allowed_ptr(current, cpu_prime_mask);
+			set_cpus_allowed_ptr(current, cpu_perf_mask);
 		}
 	}
 
