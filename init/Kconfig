@@ -97,6 +97,12 @@ config CUSTOM_LD
 	depends on HAVE_CUSTOM_LD
 	default $(LD)
 
+config ERROR_LIMIT
+	int "Custom -ferror-limit value"
+	depends on CC_IS_CLANG
+	default 20 if !WERROR
+	default 1 if WERROR
+
 endmenu # "Custom configs"
 
 menu "General setup"
