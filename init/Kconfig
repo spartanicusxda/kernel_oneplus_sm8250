@@ -99,7 +99,7 @@ config CUSTOM_LD
 
 config ERROR_LIMIT
 	int "Custom -ferror-limit value"
-	depends on CC_IS_CLANG
+	depends on CC_IS_CLANG && HAVE_CUSTOM_CONFIGS
 	default 20 if !WERROR
 	default 1 if WERROR
 
