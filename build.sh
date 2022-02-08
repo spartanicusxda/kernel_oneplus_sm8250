@@ -4,9 +4,9 @@ export CROSS_COMPILE_COMPAT="$HOME/proton-clang/bin/arm-linux-gnueabi-"
 export DTC_EXT=$HOME/dtc
 
 if [[ -f "arch/arm64/configs/$1" || -f "arch/arm64/configs/vendor/$1" ]] ; then
-defconfig = $1
+defconfig=$1
 else
-defconfig = shamika_defconfig
+defconfig=shamika_defconfig
 fi
 
 
