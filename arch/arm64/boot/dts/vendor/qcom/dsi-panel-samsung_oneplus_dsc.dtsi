@@ -48,6 +48,7 @@
 		qcom,mdss-dsi-init-delay-us = <1000>;
 		//qcom,mdss-dsi-te-check-enable;
 		qcom,mdss-dsi-te-using-te-pin;
+		qcom,ulps-enabled;
 		qcom,mdss-dsi-lp11-init;
 		qcom,mdss-dsi-high-brightness-panel;
 		qcom,mdss-dsi-acl-cmd-index = <0>;
@@ -323,7 +324,7 @@
 				qcom,mdss-dsi-h-sync-pulse = <0>;
 				qcom,mdss-dsi-off-command=[
 				05 01 00 00 0A 00 02 28 00
-				05 01 00 00 78 00 02 10 00
+				05 01 00 00 0a 00 02 10 00
 				];
 				qcom,mdss-dsi-panel-hbm-brightness-on-command = [
 				/* ELVSS DIM OFF */
@@ -947,7 +948,7 @@
 				qcom,mdss-dsi-h-sync-pulse = <0>;
 				qcom,mdss-dsi-off-command=[
 				05 01 00 00 0A 00 02 28 00
-				05 01 00 00 78 00 02 10 00
+				05 01 00 00 0a 00 02 10 00
 				];
 				qcom,mdss-dsi-panel-hbm-brightness-on-command = [
 				/* ELVSS DIM OFF */
@@ -1575,7 +1576,7 @@
 				qcom,mdss-dsi-h-sync-pulse = <0>;
 				qcom,mdss-dsi-off-command=[
 				05 01 00 00 0A 00 02 28 00
-				05 01 00 00 78 00 02 10 00
+				05 01 00 00 0a 00 02 10 00
 				];
 				qcom,mdss-dsi-panel-hbm-brightness-on-command = [
 				/* ELVSS DIM OFF */
@@ -2198,7 +2199,7 @@
 				qcom,mdss-dsi-h-sync-pulse = <0>;
 				qcom,mdss-dsi-off-command=[
 				05 01 00 00 0A 00 02 28 00
-				05 01 00 00 78 00 02 10 00
+				05 01 00 00 0a 00 02 10 00
 				];
 				qcom,mdss-dsi-panel-hbm-brightness-on-command = [
 				/* ELVSS DIM OFF */
