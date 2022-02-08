@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
-ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
-	dtbo-$(CONFIG_ARCH_KONA) += \
+ifeq ($(CONFIG_MACH_SM8250_OP_GLOBAL),y)
+	dtbo-y += \
 		oneplus8-overlay.dtbo \
 		oneplus8p-overlay.dtbo \
 		oneplus8t-overlay.dtbo \
