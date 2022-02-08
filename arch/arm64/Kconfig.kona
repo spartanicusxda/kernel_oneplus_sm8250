@@ -1,0 +1,6 @@
+config MACH_SM8250_OP_GLOBAL
+	bool "Build DTBO image for kebab/lemonades"
+	depends on ARCH_KONA
+	default n
+	help
+	  Say Y here if you want to build DTBO image for OnePlus 8T/9R
