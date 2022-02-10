@@ -81,10 +81,7 @@ static DEFINE_RWLOCK(binfmt_lock);
 #define ZYGOTE64_BIN	"/system/bin/app_process64"
 static atomic_t zygote32_pid;
 static atomic_t zygote64_pid;
-#define HWCOMPOSER_BIN_PREFIX "/vendor/bin/hw/vendor.qti.hardware.display.composer-service"
-#define UDFPS_BIN_PREFIX "/vendor/bin/hw/android.hardware.biometrics.fingerprint@2.3-service.oneplus_kona"
-#define SFLINGER_BIN_PREFIX "/system/bin/surfaceflinger"
-#define DEX2OAT64_BIN_PREFIX "/apex/com.android.art/bin/dex2oat64"
+#define UDFPS_BIN_PREFIX "/vendor/bin/hw/android.hardware.biometrics.fingerprint"
 
 bool is_zygote_pid(pid_t pid)
 {
@@ -1850,24 +1847,9 @@ static int __do_execve_file(int fd, struct filename *filename,
 		else if (unlikely(!strcmp(filename->name, ZYGOTE64_BIN)))
 			atomic_set(&zygote64_pid, current->pid);
 		else if (unlikely(!strncmp(filename->name,
-					   HWCOMPOSER_BIN_PREFIX,
-					   strlen(HWCOMPOSER_BIN_PREFIX)))) {
-			current->pc_flags |= PC_PRIME_AFFINE;
-			set_cpus_allowed_ptr(current, cpu_prime_mask);
-		} else if (unlikely(!strncmp(filename->name,
 					   UDFPS_BIN_PREFIX,
 					   strlen(UDFPS_BIN_PREFIX)))) {
 			current->pc_flags |= PC_PRIME_AFFINE;
-			set_cpus_allowed_ptr(current, cpu_prime_mask);
-		} else if (unlikely(!strncmp(filename->name,
-					   SFLINGER_BIN_PREFIX,
-					   strlen(SFLINGER_BIN_PREFIX)))) {
-			current->pc_flags |= PC_PRIME_AFFINE;
-			set_cpus_allowed_ptr(current, cpu_prime_mask);
-		} else if (unlikely(!strncmp(filename->name,
-					   DEX2OAT64_BIN_PREFIX,
-					   strlen(DEX2OAT64_BIN_PREFIX)))) {
-			current->pc_flags |= PC_PERF_AFFINE;
 			set_cpus_allowed_ptr(current, cpu_prime_mask);
 		}
 	}
