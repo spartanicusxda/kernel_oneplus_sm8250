@@ -1,6 +1,7 @@
 #!/bin/bash
 export ARCH=arm64
 export DTC_EXT=$HOME/dtc
+export CROSS_COMPILE_COMPAT="$HOME/proton-clang/bin/arm-linux-gnueabi-"
 
 if [[ -f "arch/arm64/configs/$1" || -f "arch/arm64/configs/vendor/$1" ]] ; then
 defconfig=$1
