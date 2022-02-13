@@ -1,0 +1,14 @@
+menu "Custom configs"
+
+config HAVE_CUSTOM_CONFIGS
+        bool "Support for custom configs"
+        default n
+
+config ALWAYS_COMPILE_MKCOMPILE
+        bool "Always compile mkcompile_h"
+        depends on HAVE_CUSTOM_CONFIGS
+        default n
+        help
+          Mainly used to update build timestamp on every build
+
+endmenu # "Custom configs"
