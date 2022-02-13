@@ -1024,16 +1024,6 @@ void arch_timer_mem_get_cval(u32 *lo, u32 *hi)
 }
 EXPORT_SYMBOL_GPL(arch_timer_mem_get_cval);
 
-bool arch_timer_evtstrm_available(void)
-{
-	/*
-	 * We might get called from a preemptible context. This is fine
-	 * because availability of the event stream should be always the same
-	 * for a preemptible context and context where we might resume a task.
-	 */
-	return cpumask_test_cpu(raw_smp_processor_id(), &evtstrm_available);
-}
-
 static u64 arch_counter_get_cntvct_mem(void)
 {
 	u32 vct_lo, vct_hi, tmp_hi;
