@@ -436,11 +436,11 @@ static void tp_gesture_handle(struct touchpanel_data *ts)
 			break;
 		case LeftVee:
 			enabled = LeftVee_enable;
-			key = KEY_GESTURE_RIGHT_ARROW;
+			key = KEY_GESTURE_LEFT_ARROW;
 			break;
 		case RightVee:
 			enabled = RightVee_enable;
-			key = KEY_GESTURE_LEFT_ARROW;
+			key = KEY_GESTURE_RIGHT_ARROW;
 			break;
 		case Circle:
 			enabled = Circle_enable;
