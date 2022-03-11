@@ -2487,12 +2487,6 @@ static void mmc_detect(struct mmc_host *host)
 	}
 }
 
-static bool _mmc_cache_enabled(struct mmc_host *host)
-{
-	return host->card->ext_csd.cache_size > 0 &&
-	       host->card->ext_csd.cache_ctrl & 1;
-}
-
 static int mmc_cache_card_ext_csd(struct mmc_host *host)
 {
 	int err;
@@ -2554,6 +2548,12 @@ static int mmc_test_awake_ext_csd(struct mmc_host *host)
 	kfree(ext_csd);
 
 	return err;
+}
+
+static bool _mmc_cache_enabled(struct mmc_host *host)
+{
+	return host->card->ext_csd.cache_size > 0 &&
+	       host->card->ext_csd.cache_ctrl & 1;
 }
 
 static int _mmc_suspend(struct mmc_host *host, bool is_suspend)

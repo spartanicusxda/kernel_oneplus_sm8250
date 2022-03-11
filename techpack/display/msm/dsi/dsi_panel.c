@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * Copyright (c) 2016-2021, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2016-2020, The Linux Foundation. All rights reserved.
  */
 
 #include <linux/delay.h>
@@ -2518,7 +2518,7 @@ static int dsi_panel_create_cmd_packets(const char *data,
 		cmd[i].msg.type = data[0];
 		cmd[i].last_command = (data[1] == 1);
 		cmd[i].msg.channel = data[2];
-		cmd[i].msg.flags |= data[3];
+		cmd[i].msg.flags |= (data[3] == 1 ? MIPI_DSI_MSG_REQ_ACK : 0);
 		cmd[i].msg.ctrl = 0;
 		cmd[i].post_wait_ms = cmd[i].msg.wait_ms = data[4];
 		cmd[i].msg.tx_len = ((data[5] << 8) | (data[6]));
@@ -3094,19 +3094,6 @@ static int dsi_panel_parse_bl_config(struct dsi_panel *panel)
 	} else {
 		panel->bl_config.brightness_max_level = val;
 	}
-
-	rc = utils->read_u32(utils->data, "qcom,mdss-dsi-bl-ctrl-dcs-subtype",
-		&val);
-	if (rc) {
-		DSI_DEBUG("[%s] bl-ctrl-dcs-subtype, defautling to zero\n",
-			panel->name);
-		panel->bl_config.bl_dcs_subtype = 0;
-	} else {
-		panel->bl_config.bl_dcs_subtype = val;
-	}
-
-	panel->bl_config.bl_inverted_dbv = utils->read_bool(utils->data,
-		"qcom,mdss-dsi-bl-inverted-dbv");
 
 	if (panel->bl_config.type == DSI_BACKLIGHT_PWM) {
 		rc = dsi_panel_parse_bl_pwm_config(panel);
@@ -5392,6 +5379,8 @@ bool real_aod_mode = false;
 
 extern bool oneplus_dimlayer_hbm_enable;
 bool backup_dimlayer_hbm = false;
+extern int oneplus_auth_status;
+extern int oneplus_cancel_status;
 extern int oneplus_dim_status;
 int backup_dim_status = 0;
 int dsi_panel_enable(struct dsi_panel *panel)
@@ -5462,9 +5451,21 @@ int dsi_panel_enable(struct dsi_panel *panel)
 
 	panel->need_power_on_backlight = true;
 
+	oneplus_panel_status = 2; // DISPLAY_POWER_ON
+
+	if (oneplus_cancel_status == 1) {
+		backup_dimlayer_hbm = 0;
+		backup_dim_status = 0;
+	} else if (oneplus_auth_status == 1) {
+		backup_dimlayer_hbm = 1;
+		backup_dim_status = 1;
+	}
 	oneplus_dimlayer_hbm_enable = backup_dimlayer_hbm;
 	oneplus_dim_status = backup_dim_status;
-	pr_err("Restore dim when panel goes on");
+	if (!oneplus_cancel_status)
+		pr_err("Restore dim when panel goes on");
+	oneplus_auth_status = 0;
+	oneplus_cancel_status = 0;
 
 	blank = DRM_PANEL_BLANK_UNBLANK_CHARGE;
 	notifier_data.data = &blank;

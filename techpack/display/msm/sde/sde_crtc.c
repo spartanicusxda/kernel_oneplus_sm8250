@@ -2965,8 +2965,8 @@ ssize_t notify_dim_store(struct device *dev,
 		return count;
 	oneplus_dim_status = dim_status;
 	oneplus_dimlayer_hbm_enable = oneplus_dim_status != 0;
-        backup_dimlayer_hbm = oneplus_dimlayer_hbm_enable;
-        backup_dim_status = oneplus_dim_status;
+	backup_dimlayer_hbm = oneplus_dimlayer_hbm_enable;
+	backup_dim_status = oneplus_dim_status;
 	pr_debug("notify dim %d,aod = %d press= %d aod_hide =%d\n",
 		oneplus_dim_status, dsi_display->panel->aod_status, oneplus_onscreenfp_status, aod_layer_hide);
 	if (oneplus_dim_status == 1 && HBM_flag) {
