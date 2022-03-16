@@ -656,7 +656,7 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
 	qcom_smp2p_kick(smp2p);
 
 	ret = devm_request_threaded_irq(&pdev->dev, smp2p->irq,
-					qcom_smp2p_isr, qcom_smp2p_intr,
+					NULL, qcom_smp2p_intr,
 					IRQF_ONESHOT,
 					"smp2p", (void *)smp2p);
 	if (ret) {

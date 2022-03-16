@@ -2578,32 +2578,6 @@ static void adreno_dispatcher_work(struct kthread_work *work)
 	mutex_unlock(&dispatcher->mutex);
 }
 
-static int adreno_dispatcher_thread(void *data)
-{
-	static const struct sched_param sched_rt_prio = {
-		.sched_priority = 16
-	};
-	struct adreno_device *adreno_dev = data;
-	struct adreno_dispatcher *dispatcher = &adreno_dev->dispatcher;
-
-	sched_setscheduler_nocheck(current, SCHED_RR, &sched_rt_prio);
-
-	while (1) {
-		bool should_stop;
-
-		wait_event(dispatcher->cmd_waitq,
-			  (should_stop = kthread_should_stop()) ||
-			   atomic_cmpxchg(&dispatcher->send_cmds, 1, 0));
-
-		if (should_stop)
-			break;
-
-		adreno_dispatcher_work(adreno_dev);
-	}
-
-	return 0;
-}
-
 void adreno_dispatcher_schedule(struct kgsl_device *device)
 {
 	struct adreno_device *adreno_dev = ADRENO_DEVICE(device);
