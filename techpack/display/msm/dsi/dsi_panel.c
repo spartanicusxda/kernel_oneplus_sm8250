@@ -5381,8 +5381,6 @@ int dsi_panel_enable(struct dsi_panel *panel)
 	}
 	DSI_ERR("start\n");
 
-	oneplus_panel_status = 2; // DISPLAY_POWER_ON
-
 	mutex_lock(&panel->panel_lock);
 
 	if (panel->aod_mode == 2) {
