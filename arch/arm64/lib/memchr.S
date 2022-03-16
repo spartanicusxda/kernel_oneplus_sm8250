@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
 /*
  * Copyright (C) 2021 Arm Ltd.
  */
@@ -71,5 +70,4 @@ CPU_LE(	rev	tmp, tmp)
 L(not_found):
 	mov	result, #0
 	ret
-SYM_FUNC_END_PI(memchr)
-EXPORT_SYMBOL_NOKASAN(memchr)
+ENDPIPROC(memchr)
