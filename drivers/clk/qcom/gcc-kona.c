@@ -1060,6 +1060,7 @@ static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
 	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
 	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
 	F(202000000, P_GPLL9_OUT_MAIN, 4, 0, 0),
+	F(269333333, P_GPLL9_OUT_MAIN, 3, 0, 0),
 	{ }
 };
 
@@ -1083,7 +1084,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
 			[VDD_MIN] = 19200000,
 			[VDD_LOWER] = 50000000,
 			[VDD_LOW] = 100000000,
-			[VDD_LOW_L1] = 202000000},
+			[VDD_LOW_L1] = 269333333},
 	},
 };
 
